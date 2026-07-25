@@ -1118,6 +1118,10 @@ a.contact-link {
 }
 
 @media (max-width: 760px) {
+  body {
+    font-size: 0.95rem;
+  }
+
   .section-frame {
     width: min(100% - 32px, var(--max-width));
   }
@@ -1183,6 +1187,7 @@ a.contact-link {
   .site-nav a {
     justify-content: center;
     min-height: 48px;
+    font-size: 0.72rem;
   }
 
   .hero-section {
@@ -1204,9 +1209,29 @@ a.contact-link {
     padding-bottom: 78px;
   }
 
+  .eyebrow,
+  .card-kicker {
+    font-size: 0.72rem;
+  }
+
   .hero-copy h1 {
-    font-size: 3.65rem;
+    font-size: 3.35rem;
     line-height: 0.96;
+  }
+
+  .role-line {
+    font-size: 0.98rem;
+  }
+
+  .hero-summary,
+  .section-intro > p:last-child,
+  .contact-copy > p:last-child {
+    font-size: 0.94rem;
+  }
+
+  .section-intro h2,
+  .contact-copy h2 {
+    font-size: 2.45rem;
   }
 
   .hero-actions,
@@ -1235,7 +1260,15 @@ a.contact-link {
   }
 
   .profile-panel h2 {
-    font-size: 1.35rem;
+    font-size: 1.24rem;
+  }
+
+  .profile-fact strong {
+    font-size: 0.96rem;
+  }
+
+  .profile-fact p {
+    font-size: 0.86rem;
   }
 
   .android-mascot {
@@ -1262,6 +1295,27 @@ a.contact-link {
     font-size: 2.05rem;
   }
 
+  .experience-card h3,
+  .project-card h3,
+  .skill-card h3,
+  .timeline-item h3,
+  .language-panel h3 {
+    font-size: 1.06rem;
+  }
+
+  .tag-list span,
+  .profile-tags span {
+    font-size: 0.72rem;
+  }
+
+  .mini-heading h2 {
+    font-size: 1.72rem;
+  }
+
+  .contact-link strong {
+    font-size: 0.94rem;
+  }
+
   .contact-section {
     padding: 86px 0 64px;
   }
@@ -1273,7 +1327,7 @@ a.contact-link {
   }
 
   .hero-copy h1 {
-    font-size: 2.85rem;
+    font-size: 2.6rem;
   }
 
   .hero-photo {
@@ -1282,7 +1336,7 @@ a.contact-link {
 
   .section-intro h2,
   .contact-copy h2 {
-    font-size: 1.95rem;
+    font-size: 1.78rem;
     line-height: 1.08;
   }
 
