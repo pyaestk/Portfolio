@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
   Award,
   Briefcase,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
   Code2,
   Database,
   Download,
@@ -38,9 +42,8 @@ const navItems = [
 ];
 
 const roleWords = [
-  "Android Developer",
   "Software Developer",
-  "React Developer",
+  "Android Developer",
   "Computer Science MSc Student",
 ];
 
@@ -83,6 +86,42 @@ const projects = [
     href: "https://bangkokrailway.teraz.tech/",
   },
   {
+    title: "Future Residency",
+    type: "Responsive web design",
+    description: "Classic real-estate website design with responsive pages and Bootstrap components.",
+    tags: ["HTML", "CSS", "JavaScript", "Bootstrap"],
+    image: futureResidency,
+    href: "https://pyaestk.github.io/Future-residency/",
+    action: "Live demo",
+  },
+  {
+    title: "Suit-Case",
+    type: "Android application",
+    description: "Android travel packing manager for organizing trip items and preparation lists.",
+    tags: ["Kotlin", "Firebase", "Android"],
+    image: suitCase,
+    href: "https://github.com/pyaestk/Suit-Case",
+    action: "Source code",
+  },
+  {
+    title: "Potter Verse",
+    type: "Android application",
+    description: "Android app that gives users information about the Harry Potter universe.",
+    tags: ["Kotlin", "Room", "Android"],
+    image: potterVerse,
+    href: "https://github.com/pyaestk/PotterVerse",
+    action: "Source code",
+  },
+  {
+    title: "Chronosense",
+    type: "Responsive web design",
+    description: "Modern watch business website with product-focused presentation and clean layouts.",
+    tags: ["HTML", "CSS", "JavaScript", "Bootstrap"],
+    image: chronosense,
+    href: "https://pyaestk.github.io/chronosense/",
+    action: "Live demo",
+  },
+  {
     title: "Cake Store App",
     type: "Android e-commerce application",
     description:
@@ -115,42 +154,6 @@ const projects = [
     tags: ["Android", "Security", "OTP", "Authentication", "Kotlin", "HCaptcha", "Firebase", "2FA", "Password Hashing"],
     action: "Source code",
     href: "https://github.com/pyaestk/Secure-Authentication"
-  },
-  {
-    title: "Future Residency",
-    type: "Responsive web design",
-    description: "Classic real-estate website design with responsive pages and Bootstrap components.",
-    tags: ["HTML", "CSS", "JavaScript", "Bootstrap"],
-    image: futureResidency,
-    href: "https://pyaestk.github.io/Future-residency/",
-    action: "Live demo",
-  },
-  {
-    title: "Chronosense",
-    type: "Responsive web design",
-    description: "Modern watch business website with product-focused presentation and clean layouts.",
-    tags: ["HTML", "CSS", "JavaScript", "Bootstrap"],
-    image: chronosense,
-    href: "https://pyaestk.github.io/chronosense/",
-    action: "Live demo",
-  },
-  {
-    title: "Potter Verse",
-    type: "Android application",
-    description: "Android app that gives users information about the Harry Potter universe.",
-    tags: ["Kotlin", "Room", "Android"],
-    image: potterVerse,
-    href: "https://github.com/pyaestk/PotterVerse",
-    action: "Source code",
-  },
-  {
-    title: "Suit-Case",
-    type: "Android application",
-    description: "Android travel packing manager for organizing trip items and preparation lists.",
-    tags: ["Kotlin", "Firebase", "Android"],
-    image: suitCase,
-    href: "https://github.com/pyaestk/Suit-Case",
-    action: "Source code",
   },
 ];
 
@@ -215,6 +218,7 @@ const certificates = [
   "Android App Development with Kotlin - Udemy",
   "Create REST APIs with Spring and Java - Codecademy",
   "Learn Docker - Boot.dev",
+  "Learn CI/CD with GitHub Actions, Docker and Go Course - Boot.dev",
   "CS50's Introduction to Computer Science - Harvard University",
   "Learn Java - Codecademy",
   "Exploring Networking with Cisco Packet Tracer",
@@ -269,31 +273,53 @@ function useTyping(words) {
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const projectsContainerRef = useRef(null);
   const typedText = useTyping(roleWords);
+
+  const scrollProjects = (direction) => {
+    if (projectsContainerRef.current) {
+      const card = projectsContainerRef.current.querySelector(".project-card");
+      const cardWidth = card ? card.offsetWidth + 20 : 360;
+      projectsContainerRef.current.scrollBy({
+        left: direction === "left" ? -cardWidth : cardWidth,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 400);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const revealTargets = document.querySelectorAll("[data-reveal]");
     const observer = new IntersectionObserver(
-      (entries) => {
+      (entries, obs) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
+            obs.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.08, rootMargin: "0px 0px 96px" },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
 
     revealTargets.forEach((target) => observer.observe(target));
-    const fallbackId = window.setTimeout(() => {
-      revealTargets.forEach((target) => target.classList.add("is-visible"));
-    }, 1800);
 
     return () => {
-      window.clearTimeout(fallbackId);
       observer.disconnect();
     };
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="site-shell">
@@ -303,49 +329,51 @@ function App() {
       <div className="background-shade" aria-hidden="true" />
 
       <header className="site-header">
-        <a className="brand-mark" href="#home" aria-label="Pyae Sone Thant Kyaw home">
-          PSTK
-        </a>
+        <div className="site-header-inner">
+          <a className="brand-mark" href="#home" aria-label="Pyae Sone Thant Kyaw home">
+            PSTK
+          </a>
 
-        <button
-          className="menu-toggle"
-          type="button"
-          aria-label="Toggle navigation menu"
-          aria-expanded={isMenuOpen}
-          onClick={() => setIsMenuOpen((value) => !value)}
-        >
-          {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
+          <button
+            className="menu-toggle"
+            type="button"
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMenuOpen}
+            onClick={() => setIsMenuOpen((value) => !value)}
+          >
+            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
 
-        <nav className={`site-nav ${isMenuOpen ? "is-open" : ""}`} aria-label="Primary navigation">
-          {navItems.map((item) => (
-            <a key={item.href} href={item.href} onClick={() => setIsMenuOpen(false)}>
-              {item.label}
-            </a>
-          ))}
-        </nav>
+          <nav className={`site-nav ${isMenuOpen ? "is-open" : ""}`} aria-label="Primary navigation">
+            {navItems.map((item) => (
+              <a key={item.href} href={item.href} onClick={() => setIsMenuOpen(false)}>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </div>
       </header>
 
       <main>
         <section className="hero-section section-frame" id="home">
           <div className="hero-copy">
-            <p className="eyebrow" data-reveal>
+            <p className="eyebrow" data-reveal style={{ "--reveal-delay": "100ms" }}>
               Bangkok, Thailand
             </p>
-            <h1 data-reveal>
+            <h1 data-reveal style={{ "--reveal-delay": "200ms" }}>
               Pyae Sone
               <span>Thant Kyaw</span>
             </h1>
-            <p className="role-line" data-reveal>
+            <p className="role-line" data-reveal style={{ "--reveal-delay": "300ms" }}>
               Hi, I am <span>{typedText}</span>
             </p>
-            <p className="hero-summary" data-reveal>
+            <p className="hero-summary" data-reveal style={{ "--reveal-delay": "400ms" }}>
               A 22-year-old Master's student in Computer Science and freelance Android developer
               building practical, clean, and responsive software across mobile, web, backend, and
               data-focused projects.
             </p>
 
-            <div className="hero-actions" data-reveal>
+            <div className="hero-actions" data-reveal style={{ "--reveal-delay": "500ms" }}>
               <a className="button button-primary" href={cvHref} download="PyaeSone_ThantKyaw_CV.pdf">
                 <Download size={18} />
                 Download CV
@@ -357,18 +385,25 @@ function App() {
             </div>
           </div>
 
-          <figure className="hero-photo" data-reveal>
-            {/* <AndroidMascot /> */}
-            <img src={profilePhoto} alt="Pyae Sone Thant Kyaw portrait" />
-            {/* <figcaption>
-              <span>Pyae Sone Thant Kyaw</span>
-              <strong>Software Developer</strong>
-            </figcaption> */}
-          </figure>
+          <div className="hero-photo-wrapper" data-reveal style={{ "--reveal-delay": "350ms" }}>
+            <div className="hero-photo-glow" aria-hidden="true" />
+            <figure className="hero-photo">
+              <img src={profilePhoto} alt="Pyae Sone Thant Kyaw portrait" />
+              <figcaption className="photo-caption">
+                <span>Pyae Sone Thant Kyaw</span>
+                <strong>Software & Mobile Developer</strong>
+              </figcaption>
+            </figure>
+          </div>
+
+          <a href="#experience" className="scroll-indicator" aria-label="Scroll down to Experience" data-reveal style={{ "--reveal-delay": "600ms" }}>
+            <span>Scroll down</span>
+            <ChevronDown size={18} className="scroll-arrow" />
+          </a>
         </section>
 
         <section className="profile-section section-frame" aria-label="Profile snapshot">
-          <div className="profile-panel" data-reveal>
+          <div className="profile-panel" data-reveal style={{ "--reveal-delay": "100ms" }}>
             <p className="eyebrow">Profile snapshot</p>
             <h2>Practical software work across Android and web.</h2>
             <p>
@@ -383,9 +418,9 @@ function App() {
             </div>
           </div>
 
-          <div className="profile-facts" aria-label="Profile highlights" data-reveal>
-            {profileFacts.map((item) => (
-              <div className="profile-fact" key={item.label}>
+          <div className="profile-facts" aria-label="Profile highlights" data-reveal style={{ "--reveal-delay": "250ms" }}>
+            {profileFacts.map((item, index) => (
+              <div className="profile-fact" key={item.label} style={{ "--reveal-delay": `${index * 120}ms` }}>
                 <span>{item.label}</span>
                 <strong>{item.value}</strong>
                 <p>{item.detail}</p>
@@ -398,12 +433,11 @@ function App() {
           <SectionIntro
             label="Experience"
             title="Building Android apps with practical delivery in mind."
-            // text="The updated CV now positions the portfolio around freelance Android development, clean architecture, API integration, and responsive UI delivery."
           />
 
           <div className="experience-grid">
-            {experience.map((item) => (
-              <article className="experience-card" key={item.role} data-reveal>
+            {experience.map((item, index) => (
+              <article className="experience-card" key={item.role} data-reveal style={{ "--reveal-delay": `${index * 120}ms` }}>
                 <div className="card-icon">
                   <Briefcase size={22} />
                 </div>
@@ -426,42 +460,65 @@ function App() {
           <div className="section-heading-row">
             <SectionIntro
               label="Projects"
-              title="Selected work across mobile, web, analytics, and engineering tooling."
-              // text="A single view of current CV projects and earlier portfolio work, grouped together for easier scanning."
+              title="My work across mobile, web, analytics, and engineering tooling."
             />
-            <a href="https://github.com/pyaestk" target="_blank" rel="noreferrer">
-              <Github size={18} />
-              GitHub profile
-            </a>
+            <div className="carousel-controls-group">
+              <div className="carousel-nav-btns">
+                <button
+                  type="button"
+                  className="carousel-btn"
+                  onClick={() => scrollProjects("left")}
+                  aria-label="Previous projects"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <button
+                  type="button"
+                  className="carousel-btn"
+                  onClick={() => scrollProjects("right")}
+                  aria-label="Next projects"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+              <a href="https://github.com/pyaestk" target="_blank" rel="noreferrer" className="github-link-btn">
+                <Github size={18} />
+                GitHub profile
+              </a>
+            </div>
           </div>
 
-          <div className="projects-grid">
-            {projects.map((project, index) => (
-              <article
-                className={`project-card ${project.image ? "has-image" : ""} ${
-                  project.imageVariant === "wide" ? "wide-preview" : ""
-                }`}
-                key={project.title}
-                data-reveal
-              >
-                {project.image ? (
-                  <img src={project.image} alt={`${project.title} project preview`} />
-                ) : null}
-                <div className="project-card-body">
-                  <span className="project-index">{String(index + 1).padStart(2, "0")}</span>
-                  <p className="card-kicker">{project.type}</p>
-                  <h3>{project.title}</h3>
-                  <p>{project.description}</p>
-                  <TagList tags={project.tags} />
-                  {project.href ? (
-                    <a className="project-action" href={project.href} target="_blank" rel="noreferrer">
-                      {project.action}
-                      <ExternalLink size={16} />
-                    </a>
+          <div className="projects-carousel-container">
+            <div className="projects-carousel-track" ref={projectsContainerRef}>
+              {projects.map((project, index) => (
+                <article
+                  className={`project-card ${project.image ? "has-image" : ""} ${project.imageVariant === "wide" ? "wide-preview" : ""
+                    }`}
+                  key={project.title}
+                  data-reveal
+                  style={{ "--reveal-delay": `${(index % 3) * 100}ms` }}
+                >
+                  {project.image ? (
+                    <div className="project-image-wrapper">
+                      <img src={project.image} alt={`${project.title} project preview`} />
+                    </div>
                   ) : null}
-                </div>
-              </article>
-            ))}
+                  <div className="project-card-body">
+                    <span className="project-index">{String(index + 1).padStart(2, "0")}</span>
+                    <p className="card-kicker">{project.type}</p>
+                    <h3>{project.title}</h3>
+                    <p>{project.description}</p>
+                    <TagList tags={project.tags} />
+                    {project.href ? (
+                      <a className="project-action" href={project.href} target="_blank" rel="noreferrer">
+                        {project.action}
+                        <ExternalLink size={16} />
+                      </a>
+                    ) : null}
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -473,10 +530,10 @@ function App() {
           />
 
           <div className="skills-grid">
-            {skillGroups.map((group) => {
+            {skillGroups.map((group, index) => {
               const Icon = group.icon;
               return (
-                <article className="skill-card" key={group.title} data-reveal>
+                <article className="skill-card" key={group.title} data-reveal style={{ "--reveal-delay": `${(index % 3) * 100}ms` }}>
                   <div className="skill-heading">
                     <Icon size={21} />
                     <h3>{group.title}</h3>
@@ -489,11 +546,11 @@ function App() {
         </section>
 
         <section className="split-section section-frame">
-          <div className="panel-column" data-reveal>
+          <div className="panel-column" data-reveal style={{ "--reveal-delay": "100ms" }}>
             <SectionMiniHeading icon={GraduationCap} label="Education" />
             <div className="timeline-list">
-              {education.map((item) => (
-                <article className="timeline-item" key={item.title}>
+              {education.map((item, index) => (
+                <article className="timeline-item" key={item.title} style={{ "--reveal-delay": `${index * 100}ms` }}>
                   <span>{item.date}</span>
                   <h3>{item.title}</h3>
                   <p>{item.place}</p>
@@ -503,7 +560,7 @@ function App() {
             </div>
           </div>
 
-          <div className="panel-column" data-reveal>
+          <div className="panel-column" data-reveal style={{ "--reveal-delay": "250ms" }}>
             <SectionMiniHeading icon={Award} label="Certificates" />
             <ul className="certificate-list">
               {certificates.map((certificate) => (
@@ -524,7 +581,7 @@ function App() {
         </section>
 
         <section className="contact-section section-frame" id="contact">
-          <div className="contact-copy" data-reveal>
+          <div className="contact-copy" data-reveal style={{ "--reveal-delay": "100ms" }}>
             <p className="eyebrow">Contact</p>
             <h2>Let's build something clean, useful, and thoughtfully engineered.</h2>
             <p>
@@ -533,7 +590,7 @@ function App() {
             </p>
           </div>
 
-          <div className="contact-grid" data-reveal>
+          <div className="contact-grid" data-reveal style={{ "--reveal-delay": "250ms" }}>
             <ContactLink icon={Mail} label="Email" href="mailto:pyaesonethantkyaw205@gmail.com">
               pyaesonethantkyaw205@gmail.com
             </ContactLink>
@@ -554,6 +611,15 @@ function App() {
           </div>
         </section>
       </main>
+
+      <button
+        className={`back-to-top ${showBackToTop ? "is-visible" : ""}`}
+        onClick={scrollToTop}
+        type="button"
+        aria-label="Back to top"
+      >
+        <ChevronUp size={20} />
+      </button>
     </div>
   );
 }
@@ -601,21 +667,6 @@ function ContactLink({ icon: Icon, label, href, children }) {
       <span>{label}</span>
       <strong>{children}</strong>
     </a>
-  );
-}
-
-function AndroidMascot() {
-  return (
-    <div className="android-mascot" aria-hidden="true">
-      <div className="android-head">
-        <span className="eye eye-left" />
-        <span className="eye eye-right" />
-      </div>
-      <div className="android-body">
-        <span className="android-arm android-arm-left" />
-        <span className="android-arm android-arm-right" />
-      </div>
-    </div>
   );
 }
 
