@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { GitHubCalendar } from "react-github-calendar";
+import "react-github-calendar/tooltips.css";
 import {
   ArrowUpRight,
   Award,
@@ -30,13 +32,15 @@ import chronosense from "../img/project2-thumbnail-min.png";
 import potterVerse from "../img/android-project1-thumbnail.png";
 import suitCase from "../img/android-project2-thumbnail.png";
 import profilePhoto from "../img/profile-photo.jpg";
+import courtConnect from "../img/courtconnect-thumbnail.png";
 
-const cvHref = `${import.meta.env.BASE_URL}CV.pdf`;
+const cvHref = `${import.meta.env.BASE_URL}PSTK_CV.pdf`;
 
 const navItems = [
   { label: "Home", href: "#home" },
   { label: "Experience", href: "#experience" },
   { label: "Projects", href: "#projects" },
+  { label: "GitHub", href: "#github" },
   { label: "Skills", href: "#skills" },
   { label: "Contact", href: "#contact" },
 ];
@@ -84,6 +88,15 @@ const projects = [
     imageVariant: "wide",
     action: "Live demo",
     href: "https://bangkokrailway.teraz.tech/",
+  },
+  {
+    title: "Court Connect",
+    type: "Mahidol ICT badminton club management platform",
+    description:
+      "Badminton club booking app with lobbies, wallet points, booking automation, LINE integration, and Docker deployment.",
+    image: courtConnect,
+    tags: ["React", "Express", "MongoDB", "Socket.IO", "Docker", "LINE", "Wallet"],
+    action: "Live app",
   },
   {
     title: "Future Residency",
@@ -389,10 +402,10 @@ function App() {
             <div className="hero-photo-glow" aria-hidden="true" />
             <figure className="hero-photo">
               <img src={profilePhoto} alt="Pyae Sone Thant Kyaw portrait" />
-              <figcaption className="photo-caption">
+              {/* <figcaption className="photo-caption">
                 <span>Pyae Sone Thant Kyaw</span>
                 <strong>Software & Mobile Developer</strong>
-              </figcaption>
+              </figcaption> */}
             </figure>
           </div>
 
@@ -518,6 +531,37 @@ function App() {
                   </div>
                 </article>
               ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="content-section section-frame" id="github">
+          <div className="section-heading-row github-heading-row">
+            <SectionIntro
+              label="GitHub"
+              title="Contribution activity."
+              text="Recent public coding activity from my GitHub profile."
+            />
+            <a href="https://github.com/pyaestk" target="_blank" rel="noreferrer" className="github-link-btn">
+              <Github size={18} />
+              View profile
+            </a>
+          </div>
+
+          <div className="github-activity-panel" data-reveal>
+            <div className="github-calendar-scroll">
+              <GitHubCalendar
+                username="pyaestk"
+                colorScheme="dark"
+                blockSize={13}
+                blockMargin={5}
+                blockRadius={2}
+                fontSize={14}
+                errorMessage="GitHub activity is unavailable right now."
+                theme={{
+                  dark: ["rgba(255, 255, 255, 0.08)", "#d9ff5f"],
+                }}
+              />
             </div>
           </div>
         </section>
