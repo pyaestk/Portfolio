@@ -5,7 +5,6 @@ import {
   ArrowUpRight,
   Award,
   Briefcase,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
@@ -340,6 +339,12 @@ function App() {
         <source src={bgVideo} type="video/mp4" />
       </video>
       <div className="background-shade" aria-hidden="true" />
+      <div className="ambient-system" aria-hidden="true">
+        <span className="ambient-grid" />
+        <span className="ambient-sweep ambient-sweep-one" />
+        <span className="ambient-sweep ambient-sweep-two" />
+        <span className="ambient-noise" />
+      </div>
 
       <header className="site-header">
         <div className="site-header-inner">
@@ -396,10 +401,12 @@ function App() {
                 View projects
               </a>
             </div>
+
           </div>
 
           <div className="hero-photo-wrapper" data-reveal style={{ "--reveal-delay": "350ms" }}>
             <div className="hero-photo-glow" aria-hidden="true" />
+            <div className="hero-frame-lines" aria-hidden="true" />
             <figure className="hero-photo">
               <img src={profilePhoto} alt="Pyae Sone Thant Kyaw portrait" />
               {/* <figcaption className="photo-caption">
@@ -407,11 +414,20 @@ function App() {
                 <strong>Software & Mobile Developer</strong>
               </figcaption> */}
             </figure>
+            <div className="hero-status-card" aria-hidden="true">
+              <span>Current focus</span>
+              <strong>Fullstack Development</strong>
+            </div>
           </div>
 
-          <a href="#experience" className="scroll-indicator" aria-label="Scroll down to Experience" data-reveal style={{ "--reveal-delay": "600ms" }}>
-            <span>Scroll down</span>
-            <ChevronDown size={18} className="scroll-arrow" />
+          <a href="#experience" className="scroll-indicator" aria-label="Scroll to Experience" data-reveal style={{ "--reveal-delay": "600ms" }}>
+            <span className="scroll-copy" aria-hidden="true">
+              <span>Scroll</span>
+              <span>Down</span>
+            </span>
+            <span className="scroll-rail" aria-hidden="true">
+              <span className="scroll-rail-dot" />
+            </span>
           </a>
         </section>
 
@@ -423,12 +439,6 @@ function App() {
               Currently combining freelance Android delivery with graduate study in computer
               science, with a growing stack across frontend, backend, cloud, and data analysis.
             </p>
-            <div className="profile-tags">
-              <span>Kotlin</span>
-              <span>React</span>
-              <span>FastAPI</span>
-              <span>Firebase</span>
-            </div>
           </div>
 
           <div className="profile-facts" aria-label="Profile highlights" data-reveal style={{ "--reveal-delay": "250ms" }}>
@@ -441,6 +451,7 @@ function App() {
             ))}
           </div>
         </section>
+
 
         <section className="content-section section-frame" id="experience">
           <SectionIntro
@@ -473,7 +484,7 @@ function App() {
           <div className="section-heading-row">
             <SectionIntro
               label="Projects"
-              title="My work across mobile, web, analytics, and engineering tooling."
+              title="My work across mobile, web, and data analytics."
             />
             <div className="carousel-controls-group">
               <div className="carousel-nav-btns">
@@ -569,7 +580,7 @@ function App() {
         <section className="content-section section-frame" id="skills">
           <SectionIntro
             label="Skills"
-            title="A broader stack, still grounded in Android and software fundamentals."
+            title="A broader stack, still grounded in Android and Web fundamentals."
             text="React, Spring Boot, FastAPI, Docker, data analysis, and CI/CD now sit beside Kotlin, Java, Firebase, and clean architecture."
           />
 
@@ -619,6 +630,23 @@ function App() {
                   <strong>{item.language}</strong>
                   <span>{item.level}</span>
                 </p>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section
+          className="motto-marquee"
+          aria-label="Motto: Build clean software, keep learning, and ship something useful."
+          data-reveal
+          style={{ "--reveal-delay": "120ms" }}
+        >
+          <div className="motto-marquee-window">
+            <div className="motto-marquee-track" aria-hidden="true">
+              {Array.from({ length: 2 }).map((_, groupIndex) => (
+                <div className="motto-marquee-group" key={groupIndex}>
+                  <span>Build clean software. Keep learning. Ship something useful.</span>
+                </div>
               ))}
             </div>
           </div>
