@@ -1013,10 +1013,21 @@ video {
   scrollbar-color: rgba(217, 255, 95, 0.38) transparent;
 }
 
-.github-calendar-scroll>div {
+.github-calendar-frame {
+  position: relative;
   width: max-content;
   min-width: 760px;
   margin: 0 auto;
+}
+
+.github-current-month-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .github-calendar-scroll text {

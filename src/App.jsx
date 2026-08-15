@@ -50,6 +50,8 @@ const roleWords = [
   "Computer Science MSc Student",
 ];
 
+const currentMonthLabel = new Intl.DateTimeFormat("en", { month: "short" }).format(new Date());
+
 const profileFacts = [
   {
     label: "Current role",
@@ -561,18 +563,26 @@ function App() {
 
           <div className="github-activity-panel" data-reveal>
             <div className="github-calendar-scroll">
-              <GitHubCalendar
-                username="pyaestk"
-                colorScheme="dark"
-                blockSize={13}
-                blockMargin={5}
-                blockRadius={2}
-                fontSize={14}
-                errorMessage="GitHub activity is unavailable right now."
-                theme={{
-                  dark: ["rgba(255, 255, 255, 0.08)", "#d9ff5f"],
-                }}
-              />
+              <div className="github-calendar-frame">
+                <GitHubCalendar
+                  username="pyaestk"
+                  colorScheme="dark"
+                  blockSize={13}
+                  blockMargin={5}
+                  blockRadius={2}
+                  fontSize={14}
+                  errorMessage="GitHub activity is unavailable right now."
+                  labels={{
+                    totalCount: `{{count}} contributions in the last year, through ${currentMonthLabel}`,
+                  }}
+                  theme={{
+                    dark: ["rgba(255, 255, 255, 0.08)", "#d9ff5f"],
+                  }}
+                />
+                <span className="github-current-month-label" aria-hidden="true">
+                  {currentMonthLabel}
+                </span>
+              </div>
             </div>
           </div>
         </section>
