@@ -579,9 +579,6 @@ function App() {
                     dark: ["rgba(255, 255, 255, 0.08)", "#d9ff5f"],
                   }}
                 />
-                <span className="github-current-month-label" aria-hidden="true">
-                  {currentMonthLabel}
-                </span>
               </div>
             </div>
           </div>

@@ -1020,16 +1020,6 @@ video {
   margin: 0 auto;
 }
 
-.github-current-month-label {
-  position: absolute;
-  top: 0;
-  right: 0;
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 800;
-  line-height: 1;
-}
-
 .github-calendar-scroll text {
   fill: var(--muted);
 }
