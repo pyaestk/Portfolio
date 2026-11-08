@@ -1,752 +1,166 @@
 import { useEffect, useRef, useState } from "react";
 import { GitHubCalendar } from "react-github-calendar";
 import "react-github-calendar/tooltips.css";
-import {
-  ArrowUpRight,
-  Award,
-  Briefcase,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  Code2,
-  Database,
-  Download,
-  ExternalLink,
-  Github,
-  GraduationCap,
-  Linkedin,
-  Mail,
-  MapPin,
-  Menu,
-  Phone,
-  Server,
-  Smartphone,
-  Wrench,
-  X,
-} from "lucide-react";
-import bgVideo from "../img/background-vid.mp4";
-import bangkokTransit from "../img/bangkok-transit-preview.png";
-import futureResidency from "../img/project1-thumbnail-min.png";
-import chronosense from "../img/project2-thumbnail-min.png";
-import potterVerse from "../img/android-project1-thumbnail.png";
-import suitCase from "../img/android-project2-thumbnail.png";
+import { ArrowDown, ArrowUp, ArrowUpRight, Menu, Plus, X } from "lucide-react";
 import profilePhoto from "../img/profile-photo.jpg";
-import courtConnect from "../img/courtconnect-thumbnail.png";
+import { projects, skills, education, certificates, languages } from "./data/portfolio";
 
+const navigation = ["about", "experience", "work", "github", "skills", "contact"];
 const cvHref = `${import.meta.env.BASE_URL}PSTK_CV.pdf`;
 
-const navItems = [
-  { label: "Home", href: "#home" },
-  { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
-  { label: "GitHub", href: "#github" },
-  { label: "Skills", href: "#skills" },
-  { label: "Contact", href: "#contact" },
-];
-
-const roleWords = [
-  "Software Developer",
-  "Android Developer",
-  "Computer Science MSc Student",
-];
-
-const currentMonthLabel = new Intl.DateTimeFormat("en", { month: "short" }).format(new Date());
-
-const profileFacts = [
-  {
-    label: "Current role",
-    value: "Freelance Android Developer",
-    detail: "Building Kotlin and Java apps with Firebase, REST APIs, MVVM, and Compose.",
-  },
-  {
-    label: "Work range",
-    value: "Mobile, web, backend, and data",
-    detail: "React, FastAPI, Spring Boot, Docker, Python analytics, and SQL/MongoDB.",
-  },
-];
-
-const experience = [
-  {
-    role: "Freelance Android Developer",
-    company: "Remote clients",
-    period: "Mar 2025 - Current",
-    details: [
-      "Develop custom Android applications using Kotlin and Java with MVVM, clean code principles, Jetpack Compose, and View-based UI.",
-      "Integrate Firebase, REST APIs, and third-party libraries into practical client solutions.",
-      "Design responsive mobile interfaces following Material Design and collaborate remotely through delivery.",
-    ],
-  },
-];
-
-const projects = [
-  {
-    title: "Bangkok Transit",
-    type: "Public railway transportation platform",
-    description:
-      "Responsive map-based trip planning UI connected with backend APIs for route and station information.",
-    tags: ["React", "REST APIs", "UI/UX", "Maps", "Python", "FastAPI", "MySQL", "Docker", "Nginx"],
-    image: bangkokTransit,
-    imageVariant: "wide",
-    action: "Live demo",
-    href: "https://bangkoktransit.onrender.com",
-  },
-  {
-    title: "Court Connect",
-    type: "Mahidol ICT badminton club management platform",
-    description:
-      "Badminton club booking app with lobbies, wallet points, booking automation, LINE integration, and Docker deployment.",
-    image: courtConnect,
-    tags: ["React", "Express", "MongoDB", "Socket.IO", "Docker", "LINE", "Wallet"],
-    action: "Live app",
-  },
-  {
-    title: "Future Residency",
-    type: "Responsive web design",
-    description: "Classic real-estate website design with responsive pages and Bootstrap components.",
-    tags: ["HTML", "CSS", "JavaScript", "Bootstrap"],
-    image: futureResidency,
-    href: "https://pyaestk.github.io/Future-residency/",
-    action: "Live demo",
-  },
-  {
-    title: "Suit-Case",
-    type: "Android application",
-    description: "Android travel packing manager for organizing trip items and preparation lists.",
-    tags: ["Kotlin", "Firebase", "Android"],
-    image: suitCase,
-    href: "https://github.com/pyaestk/Suit-Case",
-    action: "Source code",
-  },
-  {
-    title: "Potter Verse",
-    type: "Android application",
-    description: "Android app that gives users information about the Harry Potter universe.",
-    tags: ["Kotlin", "Room", "Android"],
-    image: potterVerse,
-    href: "https://github.com/pyaestk/PotterVerse",
-    action: "Source code",
-  },
-  {
-    title: "Chronosense",
-    type: "Responsive web design",
-    description: "Modern watch business website with product-focused presentation and clean layouts.",
-    tags: ["HTML", "CSS", "JavaScript", "Bootstrap"],
-    image: chronosense,
-    href: "https://pyaestk.github.io/chronosense/",
-    action: "Live demo",
-  },
-  {
-    title: "Cake Store App",
-    type: "Android e-commerce application",
-    description:
-      "Authentication, cart management, checkout, and order tracking built with Firebase, Coroutines, StateFlow, and Koin.",
-    tags: ["Kotlin", "Firebase", "StateFlow", "Koin", "MVVM", "Jetpack Compose", "Clean Architecture"],
-    action: "Source code",
-    href: "https://github.com/pyaestk/Cake-Store-App"
-  },
-  {
-    title: "Expense Tracker",
-    type: "Personal finance application",
-    description:
-      "Income, expense, budget, preferences, and analytics features with local persistence and reactive UI updates.",
-    tags: ["Android", "Persistence", "Analytics", "MVVM", "Jetpack Compose", "Kotlin", "Room", "StateFlow", "Clean Architecture"],
-    action: "Source code",
-    href: "https://github.com/pyaestk/Expenses-Tracker"
-  },
-  {
-    title: "Student Performance Analysis",
-    type: "Machine learning and statistical testing",
-    description:
-      "Cleaned education datasets, engineered features, tested hypotheses, trained models, and visualized performance trends.",
-    tags: ["Python", "Pandas", "Scikit-learn", "Statistics", "Data Visualization", "Machine Learning", "Hypothesis Testing"],
-  },
-  {
-    title: "Secure Authentication",
-    type: "Security-focused Android app",
-    description:
-      "Password hashing, email verification, OTP-based two-factor authentication, bot protection, validation, and login timeout controls.",
-    tags: ["Android", "Security", "OTP", "Authentication", "Kotlin", "HCaptcha", "Firebase", "2FA", "Password Hashing"],
-    action: "Source code",
-    href: "https://github.com/pyaestk/Secure-Authentication"
-  },
-];
-
-const skillGroups = [
-  {
-    title: "Programming",
-    icon: Code2,
-    items: ["Java", "Kotlin", "Python", "JavaScript", "Dart", "SQL"],
-  },
-  {
-    title: "Frontend",
-    icon: Smartphone,
-    items: ["React.js", "HTML", "CSS", "Tailwind CSS", "Bootstrap"],
-  },
-  {
-    title: "Backend",
-    icon: Server,
-    items: ["FastAPI", "Spring Boot", "RESTful APIs", "Authentication", "Authorization"],
-  },
-  {
-    title: "Mobile",
-    icon: Smartphone,
-    items: ["Android", "Jetpack Compose", "Flutter", "MVVM", "Clean Architecture"],
-  },
-  {
-    title: "Data",
-    icon: Database,
-    items: ["Pandas", "NumPy", "Scikit-learn", "Data Visualization", "Machine Learning"],
-  },
-  {
-    title: "Tools",
-    icon: Wrench,
-    items: ["GitHub", "Firebase", "Postman", "SonarQube", "Figma", "Docker", "Nginx"],
-  },
-];
-
-const education = [
-  {
-    date: "Expected Aug 2027",
-    title: "Master of Science: Computer Science",
-    place: "Mahidol University - Thailand",
-  },
-  {
-    date: "Feb 2025",
-    title: "Bachelor of Science: Computer Systems Engineering",
-    place: "University of Sunderland - United Kingdom",
-  },
-  {
-    date: "13 Feb 2024",
-    title: "Pearson BTEC Higher National Diploma in Computing",
-    place: "GUSTO College - Myanmar",
-    note: "Final Grade: Distinction",
-  },
-  {
-    date: "Graduated in 2020",
-    title: "Highschool Diploma",
-    place: "Great Crown Private Highschool - Myanmar",
-  },
-];
-
-const certificates = [
-  "Android App Development with Kotlin - Udemy",
-  "Create REST APIs with Spring and Java - Codecademy",
-  "Learn Docker - Boot.dev",
-  "Learn CI/CD with GitHub Actions, Docker and Go Course - Boot.dev",
-  "CS50's Introduction to Computer Science - Harvard University",
-  "Learn Java - Codecademy",
-  "Exploring Networking with Cisco Packet Tracer",
-];
-
-const languages = [
-  { language: "Burmese", level: "Native or Bilingual" },
-  { language: "English", level: "Native or Bilingual" },
-  { language: "Thai", level: "Limited Working" },
-];
-
-function useTyping(words) {
-  const [typedText, setTypedText] = useState("");
-
+function Clock() {
+  const [time, setTime] = useState("");
   useEffect(() => {
-    let wordIndex = 0;
-    let letterIndex = 0;
-    let isDeleting = false;
-    let timerId;
-
-    const tick = () => {
-      const word = words[wordIndex % words.length];
-
-      if (isDeleting) {
-        letterIndex -= 1;
-        setTypedText(word.slice(0, letterIndex));
-      } else {
-        letterIndex += 1;
-        setTypedText(word.slice(0, letterIndex));
-      }
-
-      if (!isDeleting && letterIndex === word.length) {
-        isDeleting = true;
-        timerId = window.setTimeout(tick, 1200);
-        return;
-      }
-
-      if (isDeleting && letterIndex === 0) {
-        isDeleting = false;
-        wordIndex += 1;
-      }
-
-      timerId = window.setTimeout(tick, isDeleting ? 36 : 68);
-    };
-
-    timerId = window.setTimeout(tick, 420);
-    return () => window.clearTimeout(timerId);
-  }, [words]);
-
-  return typedText;
+    const update = () => setTime(new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Bangkok", hour: "2-digit", minute: "2-digit", second: "2-digit",
+    }).format(new Date()));
+    update();
+    const timer = setInterval(update, 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return <span className="clock">BKK <time>{time}</time></span>;
 }
 
-function App() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showBackToTop, setShowBackToTop] = useState(false);
-  const projectsContainerRef = useRef(null);
-  const typedText = useTyping(roleWords);
-
-  const scrollProjects = (direction) => {
-    if (projectsContainerRef.current) {
-      const card = projectsContainerRef.current.querySelector(".project-card");
-      const cardWidth = card ? card.offsetWidth + 20 : 360;
-      projectsContainerRef.current.scrollBy({
-        left: direction === "left" ? -cardWidth : cardWidth,
-        behavior: "smooth",
-      });
-    }
-  };
-
+function Header() {
+  const [active, setActive] = useState("about");
+  const dialog = useRef(null);
   useEffect(() => {
-    const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 400);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => { if (entry.isIntersecting) setActive(entry.target.id); });
+    }, { rootMargin: "-10% 0px -65% 0px", threshold: 0 });
+    navigation.forEach((id) => observer.observe(document.getElementById(id)));
+    return () => observer.disconnect();
   }, []);
+  const closeMenu = () => dialog.current.close();
+  const openMenu = () => dialog.current.showModal();
+  return <>
+    <a className="skip-link" href="#main">Skip to content</a>
+    <header className="site-header">
+      <a href="#about" className="brand" aria-label="Pyae Sone Thant Kyaw home">PSTK<span>©</span></a>
+      <Clock />
+      <nav className="desktop-nav" aria-label="Main navigation">
+        {navigation.map((item, i) => <a href={`#${item}`} key={item} aria-current={active === item ? "location" : undefined}><span>0{i + 1}</span> {item}</a>)}
+      </nav>
+      <button type="button" className="menu-button" onClick={openMenu} aria-label="Open menu" aria-haspopup="dialog">Menu <Menu size={21} /></button>
+    </header>
+    <dialog ref={dialog} className="mobile-menu" aria-label="Navigation menu" onClick={(e) => { if (e.target === dialog.current) closeMenu(); }}>
+      <div className="menu-heading"><span className="brand">PSTK<span>©</span></span><button type="button" onClick={closeMenu} aria-label="Close menu">Close <X size={20} /></button></div>
+      <nav aria-label="Mobile navigation">{navigation.map((item, i) => <a href={`#${item}`} key={item} onClick={closeMenu}><span>0{i + 1}</span>{item}</a>)}</nav>
+      <Clock />
+    </dialog>
+  </>;
+}
 
+function SectionHeading({ number, label, children }) {
+  return <div className="section-heading"><p className="eyebrow">({number}) {label}</p><h2>{children}</h2></div>;
+}
+
+function ProjectList() {
+  const [open, setOpen] = useState(0);
+  const preview = useRef(null);
+  const [hovered, setHovered] = useState(null);
+  const previewProject = hovered === null ? null : projects[hovered];
+  return <div className="project-list" onPointerMove={(event) => {
+    if (event.pointerType === "mouse" && preview.current) {
+      preview.current.style.transform = `translate(${Math.min(event.clientX + 24, window.innerWidth - 310)}px, ${Math.max(70, event.clientY - 140)}px)`;
+    }
+  }} onPointerLeave={() => setHovered(null)}>
+    {projects.map((project, index) => {
+      const expanded = open === index;
+      return <article className={`project ${expanded ? "is-open" : ""}`} key={project.n} onPointerEnter={(e) => { if (e.pointerType === "mouse") setHovered(index); }}>
+        <h3><button className="project-toggle" type="button" id={`project-button-${project.n}`} aria-expanded={expanded} aria-controls={`project-panel-${project.n}`} onClick={() => setOpen(expanded ? null : index)}>
+          <span className="project-number">{project.n}</span><span className="project-name">{project.name}<span className="project-kind mobile-kind">{project.kind}</span></span><span className="project-kind desktop-kind">{project.kind}</span><Plus className="project-plus" size={24} aria-hidden="true" />
+        </button></h3>
+        <div className="project-panel" id={`project-panel-${project.n}`} role="region" aria-labelledby={`project-button-${project.n}`} hidden={!expanded}>
+          {project.image && <div className={`project-image ${project.n === "04" ? "mobile-project-image" : ""}`} style={{ backgroundColor: project.color }}><img src={project.image} alt={`${project.name} application preview`} loading="lazy" /></div>}
+          <div className="project-details"><div className="project-description">{project.desc.map(text => <p key={text}>{text}</p>)}</div><div className="project-stack"><p className="eyebrow muted">Stack</p><p>{project.tags}</p>{project.link && <a className="text-link" href={project.link[1]} target="_blank" rel="noreferrer">{project.link[0]} <ArrowUpRight size={17} /></a>}</div></div>
+        </div>
+      </article>;
+    })}
+    <div ref={preview} aria-hidden="true" className={`project-hover-preview ${previewProject && hovered !== open ? "visible" : ""}`} style={{ backgroundColor: previewProject?.color }}>
+      {previewProject && <span className="preview-number">{previewProject.n}</span>}
+    </div>
+  </div>;
+}
+
+export default function App() {
   useEffect(() => {
-    const revealTargets = document.querySelectorAll("[data-reveal]");
-    const observer = new IntersectionObserver(
-      (entries, obs) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            obs.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
-    );
-
-    revealTargets.forEach((target) => observer.observe(target));
-
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const animations = new Set();
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        if (!motionPreference.matches) {
+          const animation = entry.target.animate(
+            [{ opacity: 0, transform: "translateY(20px)" }, { opacity: 1, transform: "translateY(0)" }],
+            { duration: 700, easing: "cubic-bezier(.16, 1, .3, 1)" },
+          );
+          animations.add(animation);
+          animation.onfinish = () => animations.delete(animation);
+        }
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".section-heading, .section-summary, .experience-row, .project-list, .github-panel, .skill-row, .credentials > div, .contact-summary, .contact-email, .contact-links").forEach(element => observer.observe(element));
+    const stopAnimations = () => { if (motionPreference.matches) animations.forEach(animation => animation.cancel()); };
+    motionPreference.addEventListener("change", stopAnimations);
     return () => {
       observer.disconnect();
+      motionPreference.removeEventListener("change", stopAnimations);
+      animations.forEach(animation => animation.cancel());
     };
   }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  return (
-    <div className="site-shell">
-      <video className="background-video" autoPlay loop muted playsInline aria-hidden="true">
-        <source src={bgVideo} type="video/mp4" />
-      </video>
-      <div className="background-shade" aria-hidden="true" />
-      <div className="ambient-system" aria-hidden="true">
-        <span className="ambient-grid" />
-        <span className="ambient-sweep ambient-sweep-one" />
-        <span className="ambient-sweep ambient-sweep-two" />
-        <span className="ambient-noise" />
-      </div>
-
-      <header className="site-header">
-        <div className="site-header-inner">
-          <a className="brand-mark" href="#home" aria-label="Pyae Sone Thant Kyaw home">
-            PSTK
-          </a>
-
-          <button
-            className="menu-toggle"
-            type="button"
-            aria-label="Toggle navigation menu"
-            aria-expanded={isMenuOpen}
-            onClick={() => setIsMenuOpen((value) => !value)}
-          >
-            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-
-          <nav className={`site-nav ${isMenuOpen ? "is-open" : ""}`} aria-label="Primary navigation">
-            {navItems.map((item) => (
-              <a key={item.href} href={item.href} onClick={() => setIsMenuOpen(false)}>
-                {item.label}
-              </a>
-            ))}
-          </nav>
+  return <div className="site-shell">
+    <Header />
+    <main className="page-frame" id="main">
+      <section className="hero" id="about">
+        <div className="hero-intro">
+          <div className="profile-intro"><img className="profile-image" src={profilePhoto} alt="Pyae Sone Thant Kyaw" fetchpriority="high" width="224" height="280" /><p>Computer Science master's student building full-stack web and native Android apps, from intuitive UI and robust REST APIs to automated CI/CD deployment.</p></div>
+          <a href="#contact" className="availability" aria-label="Available for freelance work. Get in touch."><svg className="availability-ring" viewBox="0 0 100 100" aria-hidden="true">
+            <defs><path id="availability-circle" d="M50,50 m-40,0 a40,40 0 1,1 80,0 a40,40 0 1,1 -80,0" /></defs>
+            <text><textPath href="#availability-circle">AVAILABLE FOR FREELANCE · AVAILABLE FOR FREELANCE ·</textPath></text>
+          </svg><span className="availability-arrow" aria-hidden="true">↘</span></a>
         </div>
-      </header>
+        <h1>Pyae Sone<br /><em>Thant</em> Kyaw</h1>
+        <div className="hero-meta">
+          <p><span>Role</span>Software Developer</p><p><span>Based in</span>Bangkok, Thailand</p><p><span>Focus</span>React, Kotlin, FastAPI, Spring Boot</p>
+          <div className="hero-actions"><a className="button primary" href={cvHref} download="PyaeSone_ThantKyaw_CV.pdf">Download CV <ArrowDown size={15} /></a><a className="button secondary" href="#work">Work <ArrowUpRight size={15} /></a></div>
+        </div>
+      </section>
 
-      <main>
-        <section className="hero-section section-frame" id="home">
-          <div className="hero-copy">
-            <p className="eyebrow" data-reveal style={{ "--reveal-delay": "100ms" }}>
-              Bangkok, Thailand
-            </p>
-            <h1 data-reveal style={{ "--reveal-delay": "200ms" }}>
-              Pyae Sone
-              <span>Thant Kyaw</span>
-            </h1>
-            <p className="role-line" data-reveal style={{ "--reveal-delay": "300ms" }}>
-              Hi, I am <span>{typedText}</span>
-            </p>
-            <p className="hero-summary" data-reveal style={{ "--reveal-delay": "400ms" }}>
-              A 22-year-old Master's student in Computer Science and freelance Android developer
-              building practical, clean, and responsive software across mobile, web, backend, and
-              data-focused projects.
-            </p>
+      <section className="section experience" id="experience">
+        <SectionHeading number="01" label="Experience">Shipping <em>complete</em> products, end to end.</SectionHeading>
+        <p className="section-summary">Proven track record delivering production platforms for campus organizations, indie mobile apps, and freelance clients.</p>
+        <article className="experience-row"><p className="eyebrow">Feb 2025 — Now</p><div><h3>Freelance Software Developer</h3><p className="eyebrow muted">Self-employed</p></div><ul>{[
+          "Developed web platforms for university initiatives and student sports clubs, integrating booking, payment workflows, and tournament management.",
+          "Architected and published indie Android applications with Kotlin and Jetpack Compose, featuring offline-first storage and cloud sync.",
+          "Configured CI/CD pipelines using GitHub Actions, Docker, and Nginx on Ubuntu servers to automate testing, build, and production deployments.",
+        ].map(text => <li key={text}><span aria-hidden="true">+</span>{text}</li>)}</ul></article>
+      </section>
 
-            <div className="hero-actions" data-reveal style={{ "--reveal-delay": "500ms" }}>
-              <a className="button button-primary" href={cvHref} download="PyaeSone_ThantKyaw_CV.pdf">
-                <Download size={18} />
-                Download CV
-              </a>
-              <a className="button button-secondary" href="#projects">
-                <ArrowUpRight size={18} />
-                View projects
-              </a>
-            </div>
+      <section className="section" id="work">
+        <span id="projects" className="anchor-alias" />
+        <SectionHeading number="02" label="Selected work">Six projects across web,<br />mobile, data & <em>IoT.</em></SectionHeading>
+        <ProjectList />
+      </section>
 
-          </div>
+      <section className="section" id="github">
+        <SectionHeading number="03" label="GitHub">Code, in the <em>open.</em></SectionHeading>
+        <div className="github-panel"><div className="calendar-scroll"><GitHubCalendar username="pyaestk" colorScheme="light" blockSize={13} blockMargin={4} blockRadius={0} fontSize={12} theme={{ light: ["#ded9cf", "#d6b6a2", "#c78562", "#b4502a", "#a33313"] }} errorMessage="GitHub activity is unavailable right now. Visit my profile to see recent work." /></div><a className="text-link" href="https://github.com/pyaestk" target="_blank" rel="noreferrer">View profile <ArrowUpRight size={16} /></a></div>
+      </section>
 
-          <div className="hero-photo-wrapper" data-reveal style={{ "--reveal-delay": "350ms" }}>
-            <div className="hero-photo-glow" aria-hidden="true" />
-            <div className="hero-frame-lines" aria-hidden="true" />
-            <figure className="hero-photo">
-              <img src={profilePhoto} alt="Pyae Sone Thant Kyaw portrait" />
-              {/* <figcaption className="photo-caption">
-                <span>Pyae Sone Thant Kyaw</span>
-                <strong>Software & Mobile Developer</strong>
-              </figcaption> */}
-            </figure>
-            <div className="hero-status-card" aria-hidden="true">
-              <span>Current focus</span>
-              <strong>Fullstack Development</strong>
-            </div>
-          </div>
+      <section className="section" id="skills">
+        <SectionHeading number="04" label="Skills">Full-stack, mobile<br />& <em>DevOps.</em></SectionHeading>
+        <dl className="skills-list">{skills.map(([label, items]) => <div className="skill-row" key={label}><dt className="eyebrow">{label}</dt><dd>{items.map((item, i) => <span key={item}>{i > 0 && <span className="skill-divider" aria-hidden="true"> / </span>}<span>{item}</span></span>)}</dd></div>)}</dl>
+      </section>
 
-          <a href="#experience" className="scroll-indicator" aria-label="Scroll to Experience" data-reveal style={{ "--reveal-delay": "600ms" }}>
-            <span className="scroll-copy" aria-hidden="true">
-              <span>Scroll</span>
-              <span>Down</span>
-            </span>
-            <span className="scroll-rail" aria-hidden="true">
-              <span className="scroll-rail-dot" />
-            </span>
-          </a>
-        </section>
+      <section className="credentials section" aria-label="Education, certificates and languages"><div><h2 className="eyebrow credential-heading">(05) Education</h2>{education.map(item => <article className="education-row" key={item.title}><p className="eyebrow muted">{item.date}</p><div><h3>{item.title}</h3><p>{item.place}</p>{item.note && <p>{item.note}</p>}</div></article>)}</div><div><h2 className="eyebrow credential-heading">(06) Certificates & languages</h2><ul className="certificates">{certificates.map(item => <li key={item}>{item}</li>)}</ul><dl className="language-list">{languages.map(item => <div key={item.language}><dt>{item.language}</dt><dd>{item.level}</dd></div>)}</dl></div></section>
+    </main>
 
-        <section className="profile-section section-frame" aria-label="Profile snapshot">
-          <div className="profile-panel" data-reveal style={{ "--reveal-delay": "100ms" }}>
-            <p className="eyebrow">Profile snapshot</p>
-            <h2>Practical software work across Android and web.</h2>
-            <p>
-              Currently combining freelance Android delivery with graduate study in computer
-              science, with a growing stack across frontend, backend, cloud, and data analysis.
-            </p>
-          </div>
+    <div className="marquee" role="img" aria-label="Build clean software, keep learning, ship it."><div className="marquee-track" aria-hidden="true">{[0, 1].map(key => <span key={key}>Build clean software <span>✦</span> keep learning <span>✦</span> ship it <span>✦</span> </span>)}</div></div>
 
-          <div className="profile-facts" aria-label="Profile highlights" data-reveal style={{ "--reveal-delay": "250ms" }}>
-            {profileFacts.map((item, index) => (
-              <div className="profile-fact" key={item.label} style={{ "--reveal-delay": `${index * 120}ms` }}>
-                <span>{item.label}</span>
-                <strong>{item.value}</strong>
-                <p>{item.detail}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-
-        <section className="content-section section-frame" id="experience">
-          <SectionIntro
-            label="Experience"
-            title="Building Android apps with practical delivery in mind."
-          />
-
-          <div className="experience-grid">
-            {experience.map((item, index) => (
-              <article className="experience-card" key={item.role} data-reveal style={{ "--reveal-delay": `${index * 120}ms` }}>
-                <div className="card-icon">
-                  <Briefcase size={22} />
-                </div>
-                <div>
-                  <p className="card-kicker">{item.period}</p>
-                  <h3>{item.role}</h3>
-                  <p className="company">{item.company}</p>
-                  <ul>
-                    {item.details.map((detail) => (
-                      <li key={detail}>{detail}</li>
-                    ))}
-                  </ul>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="content-section section-frame" id="projects">
-          <div className="section-heading-row">
-            <SectionIntro
-              label="Projects"
-              title="My work across mobile, web, and data analytics."
-            />
-            <div className="carousel-controls-group">
-              <div className="carousel-nav-btns">
-                <button
-                  type="button"
-                  className="carousel-btn"
-                  onClick={() => scrollProjects("left")}
-                  aria-label="Previous projects"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <button
-                  type="button"
-                  className="carousel-btn"
-                  onClick={() => scrollProjects("right")}
-                  aria-label="Next projects"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-              <a href="https://github.com/pyaestk" target="_blank" rel="noreferrer" className="github-link-btn">
-                <Github size={18} />
-                GitHub profile
-              </a>
-            </div>
-          </div>
-
-          <div className="projects-carousel-container">
-            <div className="projects-carousel-track" ref={projectsContainerRef}>
-              {projects.map((project, index) => (
-                <article
-                  className={`project-card ${project.image ? "has-image" : ""} ${project.imageVariant === "wide" ? "wide-preview" : ""
-                    }`}
-                  key={project.title}
-                  data-reveal
-                  style={{ "--reveal-delay": `${(index % 3) * 100}ms` }}
-                >
-                  {project.image ? (
-                    <div className="project-image-wrapper">
-                      <img src={project.image} alt={`${project.title} project preview`} />
-                    </div>
-                  ) : null}
-                  <div className="project-card-body">
-                    <span className="project-index">{String(index + 1).padStart(2, "0")}</span>
-                    <p className="card-kicker">{project.type}</p>
-                    <h3>{project.title}</h3>
-                    <p>{project.description}</p>
-                    <TagList tags={project.tags} />
-                    {project.href ? (
-                      <a className="project-action" href={project.href} target="_blank" rel="noreferrer">
-                        {project.action}
-                        <ExternalLink size={16} />
-                      </a>
-                    ) : null}
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="content-section section-frame" id="github">
-          <div className="section-heading-row github-heading-row">
-            <SectionIntro
-              label="GitHub"
-              title="Contribution activity."
-              text="Recent public coding activity from my GitHub profile."
-            />
-            <a href="https://github.com/pyaestk" target="_blank" rel="noreferrer" className="github-link-btn">
-              <Github size={18} />
-              View profile
-            </a>
-          </div>
-
-          <div className="github-activity-panel" data-reveal>
-            <div className="github-calendar-scroll">
-              <div className="github-calendar-frame">
-                <GitHubCalendar
-                  username="pyaestk"
-                  colorScheme="dark"
-                  blockSize={13}
-                  blockMargin={5}
-                  blockRadius={2}
-                  fontSize={14}
-                  errorMessage="GitHub activity is unavailable right now."
-                  labels={{
-                    totalCount: `{{count}} contributions in the last year, through ${currentMonthLabel}`,
-                  }}
-                  theme={{
-                    dark: ["rgba(255, 255, 255, 0.08)", "#d9ff5f"],
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="content-section section-frame" id="skills">
-          <SectionIntro
-            label="Skills"
-            title="A broader stack, still grounded in Android and Web fundamentals."
-            text="React, Spring Boot, FastAPI, Docker, data analysis, and CI/CD now sit beside Kotlin, Java, Firebase, and clean architecture."
-          />
-
-          <div className="skills-grid">
-            {skillGroups.map((group, index) => {
-              const Icon = group.icon;
-              return (
-                <article className="skill-card" key={group.title} data-reveal style={{ "--reveal-delay": `${(index % 3) * 100}ms` }}>
-                  <div className="skill-heading">
-                    <Icon size={21} />
-                    <h3>{group.title}</h3>
-                  </div>
-                  <TagList tags={group.items} />
-                </article>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="split-section section-frame">
-          <div className="panel-column" data-reveal style={{ "--reveal-delay": "100ms" }}>
-            <SectionMiniHeading icon={GraduationCap} label="Education" />
-            <div className="timeline-list">
-              {education.map((item, index) => (
-                <article className="timeline-item" key={item.title} style={{ "--reveal-delay": `${index * 100}ms` }}>
-                  <span>{item.date}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.place}</p>
-                  {item.note ? <strong>{item.note}</strong> : null}
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <div className="panel-column" data-reveal style={{ "--reveal-delay": "250ms" }}>
-            <SectionMiniHeading icon={Award} label="Certificates" />
-            <ul className="certificate-list">
-              {certificates.map((certificate) => (
-                <li key={certificate}>{certificate}</li>
-              ))}
-            </ul>
-
-            <div className="language-panel">
-              <h3>Languages</h3>
-              {languages.map((item) => (
-                <p key={item.language}>
-                  <strong>{item.language}</strong>
-                  <span>{item.level}</span>
-                </p>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section
-          className="motto-marquee"
-          aria-label="Motto: Build clean software, keep learning, and ship something useful."
-          data-reveal
-          style={{ "--reveal-delay": "120ms" }}
-        >
-          <div className="motto-marquee-window">
-            <div className="motto-marquee-track" aria-hidden="true">
-              {Array.from({ length: 2 }).map((_, groupIndex) => (
-                <div className="motto-marquee-group" key={groupIndex}>
-                  <span>Build clean software. Keep learning. Ship something useful.</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="contact-section section-frame" id="contact">
-          <div className="contact-copy" data-reveal style={{ "--reveal-delay": "100ms" }}>
-            <p className="eyebrow">Contact</p>
-            <h2>Let's build something clean, useful, and thoughtfully engineered.</h2>
-            <p>
-              I am open to freelance Android work, web collaboration, backend integration, and
-              early-career software developer opportunities.
-            </p>
-          </div>
-
-          <div className="contact-grid" data-reveal style={{ "--reveal-delay": "250ms" }}>
-            <ContactLink icon={Mail} label="Email" href="mailto:pyaesonethantkyaw205@gmail.com">
-              pyaesonethantkyaw205@gmail.com
-            </ContactLink>
-            <ContactLink icon={Github} label="GitHub" href="https://github.com/pyaestk">
-              github.com/pyaestk
-            </ContactLink>
-            <ContactLink icon={Linkedin} label="LinkedIn" href="https://linkedin.com/in/pyaestk">
-              linkedin.com/in/pyaestk
-            </ContactLink>
-            <ContactLink icon={Phone} label="Phone" href="tel:+660610525441">
-              (+66) 0610525441
-            </ContactLink>
-            <div className="contact-link">
-              <MapPin size={20} />
-              <span>Location</span>
-              <strong>Bangkok, Thailand</strong>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <button
-        className={`back-to-top ${showBackToTop ? "is-visible" : ""}`}
-        onClick={scrollToTop}
-        type="button"
-        aria-label="Back to top"
-      >
-        <ChevronUp size={20} />
-      </button>
-    </div>
-  );
+    <footer className="contact page-frame" id="contact"><p className="eyebrow">(07) Contact</p><p className="contact-summary">Open to freelance Android work, web collaboration, backend integration, and early-career software developer opportunities.</p><a className="contact-email" href="mailto:pyaesonethantkyaw205@gmail.com">pyaesonethantkyaw205<br />@gmail.com <ArrowUpRight aria-hidden="true" /></a><div className="contact-links">
+      <a href="https://github.com/pyaestk" target="_blank" rel="noreferrer">GitHub ↗<span>github.com/pyaestk</span></a><a href="https://linkedin.com/in/pyaestk" target="_blank" rel="noreferrer">LinkedIn ↗<span>linkedin.com/in/pyaestk</span></a><a href="https://pyaestk.dev" target="_blank" rel="noreferrer">Website ↗<span>pyaestk.dev</span></a><a href="tel:+66610525441">Phone<span>(+66) 0610525441</span></a><p>Location<span>Bangkok, Thailand</span></p>
+    </div><div className="footer-bottom"><p>© {new Date().getFullYear()} Pyae Sone Thant Kyaw</p><a href="#about">Back to top <ArrowUp size={14} /></a></div></footer>
+  </div>;
 }
-
-function SectionIntro({ label, title, text }) {
-  return (
-    <div className="section-intro" data-reveal>
-      <p className="eyebrow">{label}</p>
-      <h2>{title}</h2>
-      <p>{text}</p>
-    </div>
-  );
-}
-
-function SectionMiniHeading({ icon: Icon, label }) {
-  return (
-    <div className="mini-heading">
-      <Icon size={22} />
-      <h2>{label}</h2>
-    </div>
-  );
-}
-
-function TagList({ tags }) {
-  return (
-    <div className="tag-list">
-      {tags.map((tag) => (
-        <span key={tag}>{tag}</span>
-      ))}
-    </div>
-  );
-}
-
-function ContactLink({ icon: Icon, label, href, children }) {
-  const isExternal = href.startsWith("http");
-
-  return (
-    <a
-      className="contact-link"
-      href={href}
-      target={isExternal ? "_blank" : undefined}
-      rel={isExternal ? "noreferrer" : undefined}
-    >
-      <Icon size={20} />
-      <span>{label}</span>
-      <strong>{children}</strong>
-    </a>
-  );
-}
-
-export default App;
