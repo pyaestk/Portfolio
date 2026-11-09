@@ -44,8 +44,8 @@ function Header() {
       <button type="button" className="menu-button" onClick={openMenu} aria-label="Open menu" aria-haspopup="dialog">Menu <Menu size={21} /></button>
     </header>
     <dialog ref={dialog} className="mobile-menu" aria-label="Navigation menu" onClick={(e) => { if (e.target === dialog.current) closeMenu(); }}>
-      <div className="menu-heading"><span className="brand">PSTK<span>©</span></span><button type="button" onClick={closeMenu} aria-label="Close menu">Close <X size={20} /></button></div>
-      <nav aria-label="Mobile navigation">{navigation.map((item, i) => <a href={`#${item}`} key={item} onClick={closeMenu}><span>0{i + 1}</span>{item}</a>)}</nav>
+      <div className="menu-heading"><span className="brand">PSTK<span>©</span></span><button type="button" onClick={closeMenu} aria-label="Close menu">Close <X size={21} /></button></div>
+      <nav aria-label="Mobile navigation">{navigation.map((item, i) => <a href={`#${item}`} key={item} style={{ "--menu-index": i }} onClick={closeMenu}><span>0{i + 1}</span>{item}</a>)}</nav>
       <Clock />
     </dialog>
   </>;
@@ -57,30 +57,35 @@ function SectionHeading({ number, label, children }) {
 
 function ProjectList() {
   const [open, setOpen] = useState(0);
-  const preview = useRef(null);
-  const [hovered, setHovered] = useState(null);
-  const previewProject = hovered === null ? null : projects[hovered];
-  return <div className="project-list" onPointerMove={(event) => {
-    if (event.pointerType === "mouse" && preview.current) {
-      preview.current.style.transform = `translate(${Math.min(event.clientX + 24, window.innerWidth - 310)}px, ${Math.max(70, event.clientY - 140)}px)`;
-    }
-  }} onPointerLeave={() => setHovered(null)}>
+  return <div className="project-list">
     {projects.map((project, index) => {
       const expanded = open === index;
-      return <article className={`project ${expanded ? "is-open" : ""}`} key={project.n} onPointerEnter={(e) => { if (e.pointerType === "mouse") setHovered(index); }}>
+      return <article className={`project ${expanded ? "is-open" : ""}`} key={project.n}>
         <h3><button className="project-toggle" type="button" id={`project-button-${project.n}`} aria-expanded={expanded} aria-controls={`project-panel-${project.n}`} onClick={() => setOpen(expanded ? null : index)}>
           <span className="project-number">{project.n}</span><span className="project-name">{project.name}<span className="project-kind mobile-kind">{project.kind}</span></span><span className="project-kind desktop-kind">{project.kind}</span><Plus className="project-plus" size={24} aria-hidden="true" />
         </button></h3>
-        <div className="project-panel" id={`project-panel-${project.n}`} role="region" aria-labelledby={`project-button-${project.n}`} hidden={!expanded}>
+        <div className="project-panel" id={`project-panel-${project.n}`} role="region" aria-labelledby={`project-button-${project.n}`} aria-hidden={!expanded} inert={!expanded ? "" : undefined}>
+          <div className="project-panel-clip"><div className="project-panel-content">
           {project.image && <div className={`project-image ${project.n === "04" ? "mobile-project-image" : ""}`} style={{ backgroundColor: project.color }}><img src={project.image} alt={`${project.name} application preview`} loading="lazy" /></div>}
           <div className="project-details"><div className="project-description">{project.desc.map(text => <p key={text}>{text}</p>)}</div><div className="project-stack"><p className="eyebrow muted">Stack</p><p>{project.tags}</p>{project.link && <a className="text-link" href={project.link[1]} target="_blank" rel="noreferrer">{project.link[0]} <ArrowUpRight size={17} /></a>}</div></div>
+          </div></div>
         </div>
       </article>;
     })}
-    <div ref={preview} aria-hidden="true" className={`project-hover-preview ${previewProject && hovered !== open ? "visible" : ""}`} style={{ backgroundColor: previewProject?.color }}>
-      {previewProject && <span className="preview-number">{previewProject.n}</span>}
-    </div>
   </div>;
+}
+
+function BackToTop() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const hero = document.getElementById("about");
+    const observer = new IntersectionObserver(([entry]) => {
+      setVisible(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+    });
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+  return <a href="#about" className={`floating-back-to-top ${visible ? "is-visible" : ""}`} aria-label="Back to top" title="Back to top" aria-hidden={!visible} tabIndex={visible ? 0 : -1}><ArrowUp size={22} aria-hidden="true" /></a>;
 }
 
 export default function App() {
@@ -140,18 +145,18 @@ export default function App() {
 
       <section className="section" id="work">
         <span id="projects" className="anchor-alias" />
-        <SectionHeading number="02" label="Selected work">Six projects across web,<br />mobile, data & <em>IoT.</em></SectionHeading>
+        <SectionHeading number="02" label="Selected work">My projects</SectionHeading>
         <ProjectList />
       </section>
 
       <section className="section" id="github">
         <SectionHeading number="03" label="GitHub">Code, in the <em>open.</em></SectionHeading>
-        <div className="github-panel"><div className="calendar-scroll"><GitHubCalendar username="pyaestk" colorScheme="light" blockSize={13} blockMargin={4} blockRadius={0} fontSize={12} theme={{ light: ["#ded9cf", "#d6b6a2", "#c78562", "#b4502a", "#a33313"] }} errorMessage="GitHub activity is unavailable right now. Visit my profile to see recent work." /></div><a className="text-link" href="https://github.com/pyaestk" target="_blank" rel="noreferrer">View profile <ArrowUpRight size={16} /></a></div>
+        <div className="github-panel"><div className="calendar-scroll"><GitHubCalendar username="pyaestk" colorScheme="light" blockSize={11} blockMargin={4} blockRadius={2} fontSize={11} style={{ fontFamily: "var(--mono)", margin: "0 auto" }} theme={{ light: ["#e0dfd6", "#c7e0ce", "#8dc9a2", "#3ddc84", "#168348"] }} errorMessage="GitHub activity is unavailable right now. Visit my profile to see recent work." /></div><a className="text-link" href="https://github.com/pyaestk" target="_blank" rel="noreferrer">View profile <ArrowUpRight size={16} /></a></div>
       </section>
 
       <section className="section" id="skills">
-        <SectionHeading number="04" label="Skills">Full-stack, mobile<br />& <em>DevOps.</em></SectionHeading>
-        <dl className="skills-list">{skills.map(([label, items]) => <div className="skill-row" key={label}><dt className="eyebrow">{label}</dt><dd>{items.map((item, i) => <span key={item}>{i > 0 && <span className="skill-divider" aria-hidden="true"> / </span>}<span>{item}</span></span>)}</dd></div>)}</dl>
+        <SectionHeading number="04" label="Skills">Full-stack, mobile & <em>DevOps.</em></SectionHeading>
+        <dl className="skills-list">{skills.map(([label, items], rowIndex) => <div className="skill-row" key={label}><dt className="eyebrow">{label}</dt><dd className="skills-flow" style={{ "--wave-delay": `${-rowIndex * 0.8}s` }}>{items.map(item => <span key={item}>{item}</span>)}</dd></div>)}</dl>
       </section>
 
       <section className="credentials section" aria-label="Education, certificates and languages"><div><h2 className="eyebrow credential-heading">(05) Education</h2>{education.map(item => <article className="education-row" key={item.title}><p className="eyebrow muted">{item.date}</p><div><h3>{item.title}</h3><p>{item.place}</p>{item.note && <p>{item.note}</p>}</div></article>)}</div><div><h2 className="eyebrow credential-heading">(06) Certificates & languages</h2><ul className="certificates">{certificates.map(item => <li key={item}>{item}</li>)}</ul><dl className="language-list">{languages.map(item => <div key={item.language}><dt>{item.language}</dt><dd>{item.level}</dd></div>)}</dl></div></section>
@@ -161,6 +166,7 @@ export default function App() {
 
     <footer className="contact page-frame" id="contact"><p className="eyebrow">(07) Contact</p><p className="contact-summary">Open to freelance Android work, web collaboration, backend integration, and early-career software developer opportunities.</p><a className="contact-email" href="mailto:pyaesonethantkyaw205@gmail.com">pyaesonethantkyaw205<br />@gmail.com <ArrowUpRight aria-hidden="true" /></a><div className="contact-links">
       <a href="https://github.com/pyaestk" target="_blank" rel="noreferrer">GitHub ↗<span>github.com/pyaestk</span></a><a href="https://linkedin.com/in/pyaestk" target="_blank" rel="noreferrer">LinkedIn ↗<span>linkedin.com/in/pyaestk</span></a><a href="https://pyaestk.dev" target="_blank" rel="noreferrer">Website ↗<span>pyaestk.dev</span></a><a href="tel:+66610525441">Phone<span>(+66) 0610525441</span></a><p>Location<span>Bangkok, Thailand</span></p>
-    </div><div className="footer-bottom"><p>© {new Date().getFullYear()} Pyae Sone Thant Kyaw</p><a href="#about">Back to top <ArrowUp size={14} /></a></div></footer>
+    </div><div className="footer-bottom"><p>© {new Date().getFullYear()} Pyae Sone Thant Kyaw</p></div></footer>
+    <BackToTop />
   </div>;
 }

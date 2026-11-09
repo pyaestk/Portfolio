@@ -1,5 +1,5 @@
-import bangkokTransit from "../../img/bangkok-transit-preview.png";
-import courtConnect from "../../img/courtconnect-thumbnail.png";
+import bangkokTransit from "../../img/bangkok-transit-route.png";
+import courtConnect from "../../img/courtconnect-home.png";
 import suitCase from "../../img/android-project2-thumbnail.png";
 import futureResidency from "../../img/project1-thumbnail-min.png";
 import chronosense from "../../img/project2-thumbnail-min.png";
@@ -7,10 +7,10 @@ import potterVerse from "../../img/android-project1-thumbnail.png";
 export const projects = [
   { n: '01', name: 'Bangkok Transit', kind: 'Public railway platform', desc: ['Developed responsive UI for a map-based railway navigation and trip planning platform.', 'Integrated frontend components with backend APIs to display routes and station information.'], tags: 'React.js, REST APIs, Maps, FastAPI', image: bangkokTransit, color: '#9fb8d8', link: ['Live demo', 'https://bangkoktransit.onrender.com'] },
   { n: '02', name: 'Court Connect', kind: 'Mahidol badminton club system', desc: ['Integrated frontend components with backend APIs to support court bookings, player sessions, wallet payments, and payment proof submission.', 'Collaborated on LINE integration and backend API workflows for smoother player and organizer experiences.'], tags: 'React.js, REST APIs, LINE, Docker', image: courtConnect, color: '#b7d3a8', link: ['Live demo', 'https://cconnect.tspdigital.solutions'] },
-  { n: '03', name: 'GradMUSU', kind: 'Graduate Student Union event platform', desc: ['Developed a platform for graduate students to manage profiles, register for events, join waitlists, and check in using QR codes.', 'Built organizer and admin workflows for event management, conditional registration forms, and post-event evaluations.'], tags: 'Full-stack, QR check-in, Admin tools', color: '#e8c48f' },
+  { n: '03', name: 'GradMUSU', kind: 'Graduate Student Union event platform', desc: ['Developed a platform for graduate students to manage profiles, register for events, join waitlists, and check in using QR codes.', 'Built organizer and admin workflows for event management, conditional registration forms, and post-event evaluations.'], tags: 'Full-stack, QR check-in, Admin tools', color: '#b9cbb5' },
   { n: '04', name: 'Suit Case', kind: 'Travel packing list Android app', desc: ['Developed an Android app for creating and managing trip-based packing lists.', 'Implemented login, cloud sync, photo uploads, swipe actions, and shake-to-pack interaction.'], tags: 'Kotlin, Jetpack Compose, Firebase', image: suitCase, color: '#d9b3c9', link: ['Source on GitHub', 'https://github.com/pyaestk/Suit-Case'] },
   { n: '05', name: 'Student Performance Analysis', kind: 'Machine learning & statistical testing', desc: ['Analyzed student laboratory and examination performance to identify factors influencing academic outcomes.', 'Developed machine learning models to predict performance and evaluate key predictors, visualizing trends to support data-driven educational decisions.'], tags: 'Python, Pandas, Scikit-learn, Statistics', color: '#c4c8e8' },
-  { n: '06', name: 'Line Follower Garbage Truck', kind: 'IoT autonomous robot', desc: ['Led development of an IoT-enabled robotic waste collection system.', 'Implemented line-following navigation, obstacle detection, and automated waste collection, with remote monitoring and control through Blynk.'], tags: 'IoT, Embedded, Blynk', color: '#e8a9a0', link: ['Watch demo', 'https://youtu.be/Z_S7mKZLvr8?si=AIdOmpmlI5uHrAkM&t=96'] },
+  { n: '06', name: 'Line Follower Garbage Truck', kind: 'IoT autonomous robot', desc: ['Led development of an IoT-enabled robotic waste collection system.', 'Implemented line-following navigation, obstacle detection, and automated waste collection, with remote monitoring and control through Blynk.'], tags: 'IoT, Embedded, Blynk', color: '#a5c3af', link: ['Watch demo', 'https://youtu.be/Z_S7mKZLvr8?si=AIdOmpmlI5uHrAkM&t=96'] },
 ]
 
 export const skills = [
