@@ -18,6 +18,19 @@ function Clock() {
     const timer = setInterval(update, 1000);
     return () => clearInterval(timer);
   }, []);
+  useEffect(() => {
+    const section = document.getElementById("skills");
+    if (!section) return;
+    const updateGlow = () => {
+      const rect = section.getBoundingClientRect();
+      const progress = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / (window.innerHeight + rect.height)));
+      section.style.setProperty("--skills-scroll-progress", `${progress * 100}%`);
+    };
+    updateGlow();
+    window.addEventListener("scroll", updateGlow, { passive: true });
+    window.addEventListener("resize", updateGlow);
+    return () => { window.removeEventListener("scroll", updateGlow); window.removeEventListener("resize", updateGlow); };
+  }, []);
   return <span className="clock">BKK <time>{time}</time></span>;
 }
 
@@ -56,7 +69,7 @@ function SectionHeading({ number, label, children }) {
 }
 
 function ProjectList() {
-  const [open, setOpen] = useState(0);
+  const [open, setOpen] = useState(null);
   return <div className="project-list">
     {projects.map((project, index) => {
       const expanded = open === index;
@@ -186,7 +199,7 @@ const Lamps = memo(function Lamps({ dark, onToggle }) {
   return (
     <div className="lamps-wrapper" aria-label="Room lighting controls">
       <svg
-        viewBox="0 0 380 580"
+        viewBox="0 -48 380 628"
         className="lamps-svg"
         style={{ transformOrigin: "50% 0" }}
       >
@@ -210,14 +223,20 @@ const Lamps = memo(function Lamps({ dark, onToggle }) {
         {/* lamp B (shorter, behind) */}
         <g
           key={`b${kick}`}
-          className="lamp-swing"
+          className="lamp-swing lamp-click-target"
+          role="button"
+          tabIndex={0}
+          aria-label={dark ? "Turn the lights off" : "Turn the lights on"}
+          aria-pressed={dark}
+          onClick={click}
+          onKeyDown={keyDown}
           style={{
             transformOrigin: "236px 0",
             animationDelay: ".12s",
             "--amp": "5deg",
           }}
         >
-          <line x1="236" y1="0" x2="236" y2="214" stroke="#2a2927" strokeWidth="2" />
+          <line x1="236" y1="-48" x2="236" y2="214" stroke="rgba(160,145,110,.72)" strokeWidth="2.5" />
           <g
             className={dark ? "lamp-on" : ""}
             style={{ opacity: dark ? 1 : 0, transition: "opacity .5s" }}
@@ -226,28 +245,25 @@ const Lamps = memo(function Lamps({ dark, onToggle }) {
             <ellipse cx="236" cy="292" rx="46" ry="26" fill="url(#halo)" />
           </g>
           <Shade lit={dark} x={236} y={214} scale={0.72} />
-          <Bulb
-            lit={dark}
-            x={236}
-            y={291}
-            scale={0.9}
-            pulse={pull}
-            onClick={click}
-            onKeyDown={keyDown}
-            label={dark ? "Turn the lights on" : "Turn the lights off"}
-          />
+          <Bulb lit={dark} x={236} y={291} scale={0.9} pulse={pull} />
         </g>
 
         {/* lamp A (tall, with pull chain) */}
         <g
           key={`a${kick}`}
-          className="lamp-swing"
+          className="lamp-swing lamp-click-target"
+          role="button"
+          tabIndex={0}
+          aria-label={dark ? "Turn the lights off" : "Turn the lights on"}
+          aria-pressed={dark}
+          onClick={click}
+          onKeyDown={keyDown}
           style={{
             transformOrigin: "110px 0",
             "--amp": "7deg",
           }}
         >
-          <line x1="110" y1="0" x2="110" y2="120" stroke="#2a2927" strokeWidth="2" />
+          <line x1="110" y1="-48" x2="110" y2="120" stroke="rgba(160,145,110,.72)" strokeWidth="2.5" />
           <g
             className={dark ? "lamp-on" : ""}
             style={{ opacity: dark ? 1 : 0, transition: "opacity .5s" }}
@@ -256,16 +272,7 @@ const Lamps = memo(function Lamps({ dark, onToggle }) {
             <ellipse cx="110" cy="250" rx="64" ry="38" fill="url(#halo)" />
           </g>
           <Shade lit={dark} x={110} y={120} scale={1} />
-          <Bulb
-            lit={dark}
-            x={110}
-            y={228}
-            scale={1.25}
-            pulse={pull}
-            onClick={click}
-            onKeyDown={keyDown}
-            label={dark ? "Turn the lights on" : "Turn the lights off"}
-          />
+          <Bulb lit={dark} x={110} y={228} scale={1.25} pulse={pull} />
         </g>
       </svg>
     </div>
@@ -283,7 +290,7 @@ export default function App() {
     } catch {
       /* ignore */
     }
-    return "light";
+    return "dark";
   });
 
   const toggleTheme = useCallback(() => {
@@ -359,6 +366,8 @@ export default function App() {
           "Configured CI/CD pipelines using GitHub Actions, Docker, and Nginx on Ubuntu servers to automate testing, build, and production deployments.",
         ].map(text => <li key={text}><span aria-hidden="true">+</span>{text}</li>)}</ul></article>
       </section>
+
+      <div className="marquee" role="img" aria-label="Build clean software, keep learning, ship it."><div className="marquee-track" aria-hidden="true">{[0, 1].map(key => <span key={key}>Build clean software <span>✦</span> keep learning <span>✦</span> ship it <span>✦</span> </span>)}</div></div>
 
       <section className="section" id="work">
         <span id="projects" className="anchor-alias" />
