@@ -352,7 +352,7 @@ export default function App() {
         </div>
         <h1>Pyae Sone<br /><em>Thant</em> Kyaw</h1>
         <div className="hero-meta">
-          <p><span>Role</span>Software Developer</p><p><span>Based in</span>Bangkok, Thailand</p><p><span>Focus</span>React, Kotlin, FastAPI, Spring Boot</p>
+          <p><span>Role</span>Software Developer</p><p><span>Based in</span>Bangkok, Thailand</p><p><span>Focus</span>Web, Mobile, AI, DevOps</p>
           <div className="hero-actions"><a className="button primary" href={cvHref} download="PyaeSone_ThantKyaw_CV.pdf">Download CV <ArrowDown size={15} /></a><a className="button secondary" href="#work">Work <ArrowUpRight size={15} /></a></div>
         </div>
       </section>
