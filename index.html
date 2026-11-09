@@ -7,6 +7,14 @@
       name="description"
       content="Portfolio of Pyae Sone Thant Kyaw, an aspiring software developer and freelance Android developer."
     />
+    <script>
+      try {
+        const savedTheme = localStorage.getItem("portfolio-theme") || localStorage.getItem("theme");
+        const theme = savedTheme === "dark" ? "dark" : "light";
+        document.documentElement.dataset.theme = theme;
+        if (theme === "dark") document.documentElement.classList.add("dark");
+      } catch { document.documentElement.dataset.theme = "light"; }
+    </script>
     <title>Pyae Sone Thant Kyaw - Portfolio</title>
   </head>
   <body>

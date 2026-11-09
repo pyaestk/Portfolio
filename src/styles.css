@@ -63,7 +63,6 @@ em { font-weight: 400; }
 .profile-intro { display: flex; align-items: flex-end; gap: 28px; }
 .profile-image { width: clamp(150px, 17vw, 224px); height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: center 36%; }
 .profile-intro > p { max-width: 355px; font-size: 19px; line-height: 1.35; }
-.availability { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; width: 144px; height: 144px; border: 1px solid var(--line); border-radius: 50%; text-align: center; font: 10px/1.5 var(--mono); text-transform: uppercase; }
 h1 { font-family: var(--serif); font-size: clamp(110px, 12.5vw, 175px); line-height: .85; letter-spacing: -.045em; font-weight: 400; padding-bottom: .07em; }
 h1 em { color: var(--display-hot); }
 .hero-meta { display: grid; grid-template-columns: 1fr 1fr 1.35fr auto; gap: 24px; border-top: 1px solid var(--ink); padding-top: 16px; margin-top: 38px; }
@@ -99,8 +98,16 @@ h1 em { color: var(--display-hot); }
 .project.is-open .project-panel { grid-template-rows: 1fr; opacity: 1; }
 .project-panel-clip { min-height: 0; overflow: hidden; }
 .project-panel-content { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 32px; align-items: start; padding: 30px 10px; }
-.project-image { aspect-ratio: 16 / 10; overflow: hidden; }
-.project-image img { height: 100%; width: 100%; object-fit: contain; }
+.project-image { position: relative; width: 100%; height: min(70vh, 560px); overflow: hidden; background: var(--project-color); }
+.project-image img { display: block; width: 100%; height: 100%; object-fit: contain; transition: opacity 300ms ease; }
+.project-image:hover img { opacity: .12; }
+.project-image::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; background: repeating-linear-gradient(135deg, transparent 0 12px, color-mix(in srgb, var(--ink) 12%, transparent) 12px 14px); transition: opacity 250ms ease; }
+.project-image:hover::after { opacity: 1; }
+.project-image-caption { position: absolute; z-index: 1; inset: 50% auto auto 50%; display: grid; gap: 6px; text-align: center; transform: translate(-50%, -45%); opacity: 0; color: var(--paper); font: 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; transition: opacity 250ms ease, transform 250ms ease; }
+.project-image-caption small { font-size: 9px; opacity: .8; }
+.project-image:hover .project-image-caption { opacity: 1; transform: translate(-50%, -50%); }
+.project-image-corners { position: absolute; z-index: 1; inset: 12px; pointer-events: none; opacity: 0; background: linear-gradient(var(--paper),var(--paper)) left top/12px 1px no-repeat,linear-gradient(var(--paper),var(--paper)) left top/1px 12px no-repeat,linear-gradient(var(--paper),var(--paper)) right top/12px 1px no-repeat,linear-gradient(var(--paper),var(--paper)) right top/1px 12px no-repeat,linear-gradient(var(--paper),var(--paper)) left bottom/12px 1px no-repeat,linear-gradient(var(--paper),var(--paper)) left bottom/1px 12px no-repeat,linear-gradient(var(--paper),var(--paper)) right bottom/12px 1px no-repeat,linear-gradient(var(--paper),var(--paper)) right bottom/1px 12px no-repeat; transition: opacity 250ms ease; }
+.project-image:hover .project-image-corners { opacity: 1; }
 .project-details { display: grid; grid-template-columns: 1fr; gap: 24px; margin: 0; }
 .project-panel-content:not(:has(.project-image)) { grid-template-columns: 1fr; }
 .project-panel-content:not(:has(.project-image)) .project-details { grid-template-columns: 1fr 1fr; }
@@ -175,7 +182,6 @@ h1 em { color: var(--display-hot); }
   .profile-intro { gap: 24px; }
   .profile-image { width: clamp(110px, 27vw, 180px); }
   .profile-intro p { font-size: 17px; line-height: 1.35; }
-  .availability { display: none; }
   h1 { font-size: 17vw; }
   .hero-meta { grid-template-columns: 1fr 1fr; margin-top: 30px; row-gap: 24px; font-size: 11px; }
   .hero-actions { grid-column: auto; flex-wrap: wrap; }
@@ -192,7 +198,7 @@ h1 em { color: var(--display-hot); }
   .desktop-kind { display: none; }
   .mobile-kind { display: block; max-width: none; font-size: 9px; }
   .project-panel-content { grid-template-columns: 1fr; gap: 24px; padding: 22px 0; }
-  .project-image { aspect-ratio: 16 / 10; }
+  .project-image { height: min(56vh, 460px); }
   .project-details, .project-panel-content:not(:has(.project-image)) .project-details { grid-template-columns: 1fr; gap: 24px; margin: 0; }
   .project-description { font-size: 17px; }
   .more-work-grid { gap: 32px; }
@@ -231,16 +237,6 @@ h1 em { color: var(--display-hot); }
     font-size: clamp(23px, 2.3vw, 32px);
     white-space: nowrap;
   }
-}
-
-/* Reference motion: rotating availability lettering and numbered pointer previews. */
-.availability { position: relative; border: 0; }
-.availability .availability-ring { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--ink); transform-origin: center; transform-box: view-box; }
-.availability-ring text { fill: currentColor; font: 9.5px var(--mono); letter-spacing: 2.2px; }
-.availability-arrow { display: grid; place-items: center; color: var(--display-hot); font: 44px/1 var(--serif); transform: rotate(45deg); }
-@keyframes availability-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: no-preference) {
-  .availability .availability-ring { animation: availability-spin 24s linear infinite; will-change: transform; }
 }
 
 /* Scale the hero to the available browser height, including its bottom bar. */
@@ -345,3 +341,188 @@ h1 em { color: var(--display-hot); }
   letter-spacing: inherit;
 }
 .menu-button svg, .menu-heading button svg { flex-shrink: 0; }
+
+/* A dual pendant lamp doubles as the light/dark switch with realistic illumination. */
+:root {
+  --header-glass: rgb(236 232 223 / .62);
+  --lamp-metal: #282c29;
+  --lamp-edge: #515953;
+  --lamp-cord: #757b72;
+}
+
+:root[data-theme="dark"],
+:root.dark {
+  color-scheme: dark;
+  --paper: #141916;
+  --ink: #ece8df;
+  --hot: #65d793;
+  --muted: #a5ada6;
+  --line: #3a463d;
+  --header-glass: rgb(20 25 22 / .72);
+  --lamp-metal: #343c36;
+  --lamp-edge: #778278;
+  --lamp-cord: #7e8a80;
+}
+
+html, body {
+  transition: background-color 600ms ease, color 600ms ease;
+}
+
+.site-header {
+  background: var(--header-glass);
+  transition: background-color 600ms ease;
+}
+
+.hero {
+  position: relative;
+}
+
+/* Ambient glow in hero when dark */
+.hero-ambient-glow {
+  pointer-events: none;
+  position: absolute;
+  top: -10px;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  width: auto;
+  height: 700px;
+  transition: opacity 700ms ease;
+  background: radial-gradient(ellipse at 70% 30%, rgba(255, 200, 110, 0.16), transparent 65%);
+  z-index: 0;
+}
+
+/* Lamps container & positioning */
+.lamps-wrapper {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  right: 12px;
+  z-index: 5;
+  width: 190px;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .lamps-wrapper {
+    right: 24px;
+    width: 240px;
+  }
+}
+
+@media (min-width: 900px) {
+  .lamps-wrapper {
+    right: 5%;
+    width: 310px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .lamps-wrapper {
+    right: 6%;
+    width: 340px;
+  }
+}
+
+.lamps-svg {
+  pointer-events: none;
+  width: 100%;
+  overflow: visible;
+}
+
+/* Interactive elements inside SVG */
+.lamp-bulb-button {
+  cursor: pointer;
+  outline: none;
+}
+.lamp-bulb-button:focus-visible {
+  outline: 2px solid var(--hot);
+  outline-offset: 4px;
+}
+
+/* Swinging physics animation */
+@keyframes lamp-swing {
+  0% { transform: rotate(0); }
+  20% { transform: rotate(var(--amp, 6deg)); }
+  45% { transform: rotate(calc(var(--amp, 6deg) * -0.7)); }
+  65% { transform: rotate(calc(var(--amp, 6deg) * 0.4)); }
+  85% { transform: rotate(calc(var(--amp, 6deg) * -0.15)); }
+  100% { transform: rotate(0); }
+}
+
+.lamp-swing {
+  animation: lamp-swing 2.4s ease-out 1;
+}
+
+/* Flicker animation on switch */
+@keyframes lamp-flicker {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  18% { opacity: 0.15; }
+  28% { opacity: 0.9; }
+  36% { opacity: 0.35; }
+  50%, 100% { opacity: 1; }
+}
+
+.lamp-on {
+  animation: lamp-flicker 0.9s ease-out 1;
+}
+
+/* Smooth transition when toggling theme */
+.theming,
+.theming *,
+.theming *::before,
+.theming *::after {
+  transition: background-color 0.7s ease, color 0.7s ease, border-color 0.7s ease, fill 0.7s ease !important;
+}
+
+/* Other dark mode enhancements */
+[data-theme="dark"] .mobile-menu,
+[data-theme="dark"] .marquee,
+.dark .mobile-menu,
+.dark .marquee {
+  background: #0c100d;
+  color: #ece8df;
+}
+
+[data-theme="dark"] .project.is-open .project-toggle,
+[data-theme="dark"] .project-toggle:hover,
+[data-theme="dark"] .project-toggle:focus-visible,
+.dark .project.is-open .project-toggle,
+.dark .project-toggle:hover,
+.dark .project-toggle:focus-visible {
+  background: #080d0a;
+  color: #ece8df;
+}
+
+[data-theme="dark"] .floating-back-to-top,
+.dark .floating-back-to-top {
+  color: #151413;
+}
+
+[data-theme="dark"] .github-panel,
+.dark .github-panel {
+  background: rgb(255 255 255 / 0.025);
+}
+
+[data-theme="dark"] .menu-heading .brand > span,
+.dark .menu-heading .brand > span {
+  color: var(--display-hot);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp-swing,
+  .lamp-on {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    padding-top: 180px;
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .site-header { background: var(--paper); } }
+@media (prefers-reduced-transparency: reduce) { .site-header { background: var(--paper); } }

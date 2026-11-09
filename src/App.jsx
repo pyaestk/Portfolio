@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { GitHubCalendar } from "react-github-calendar";
 import "react-github-calendar/tooltips.css";
 import { ArrowDown, ArrowUp, ArrowUpRight, Menu, Plus, X } from "lucide-react";
@@ -66,7 +66,7 @@ function ProjectList() {
         </button></h3>
         <div className="project-panel" id={`project-panel-${project.n}`} role="region" aria-labelledby={`project-button-${project.n}`} aria-hidden={!expanded} inert={!expanded ? "" : undefined}>
           <div className="project-panel-clip"><div className="project-panel-content">
-          {project.image && <div className={`project-image ${project.n === "04" ? "mobile-project-image" : ""}`} style={{ backgroundColor: project.color }}><img src={project.image} alt={`${project.name} application preview`} loading="lazy" /></div>}
+          {project.image && <div className={`project-image ${project.n === "04" ? "mobile-project-image" : ""}`} style={{ "--project-color": project.color }}><img src={project.image} alt={`${project.name} application preview`} loading="lazy" /><span className="project-image-caption" aria-hidden="true"><strong>{project.name} screenshot</strong><small>Project images / {project.n}</small></span><span className="project-image-corners" aria-hidden="true" /></div>}
           <div className="project-details"><div className="project-description">{project.desc.map(text => <p key={text}>{text}</p>)}</div><div className="project-stack"><p className="eyebrow muted">Stack</p><p>{project.tags}</p>{project.link && <a className="text-link" href={project.link[1]} target="_blank" rel="noreferrer">{project.link[0]} <ArrowUpRight size={17} /></a>}</div></div>
           </div></div>
         </div>
@@ -88,7 +88,222 @@ function BackToTop() {
   return <a href="#about" className={`floating-back-to-top ${visible ? "is-visible" : ""}`} aria-label="Back to top" title="Back to top" aria-hidden={!visible} tabIndex={visible ? 0 : -1}><ArrowUp size={22} aria-hidden="true" /></a>;
 }
 
+function Shade({ lit, x, y, scale }) {
+  return (
+    <g transform={`translate(${x} ${y}) scale(${scale})`}>
+      <path
+        d="M-6 0h12v16l5 10q-3 6 -6 10L42 112H-42L-5 36q-3 -4 -6 -10l5 -10z"
+        fill="url(#shade)"
+        stroke={lit ? "rgba(255,214,140,.55)" : "rgba(255,255,255,.12)"}
+        strokeWidth="1"
+        style={{ transition: "stroke .6s" }}
+      />
+      <path
+        d="M-30 100L-9 40"
+        stroke="rgba(255,255,255,.18)"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <ellipse
+        cx="0"
+        cy="112"
+        rx="42"
+        ry="5"
+        fill={lit ? "#ffe3a1" : "#2b2a28"}
+        style={{ transition: "fill .5s" }}
+      />
+    </g>
+  );
+}
+
+function Bulb({ lit, x, y, scale, pulse, onClick, onKeyDown, label }) {
+  return (
+    <g transform={`translate(${x} ${y}) scale(${scale})`}>
+      <g
+        role="button"
+        tabIndex={0}
+        aria-label={label}
+        aria-pressed={lit}
+        onClick={onClick}
+        onKeyDown={onKeyDown}
+        className="lamp-bulb-button"
+        style={{
+          cursor: "pointer",
+          outline: "none",
+          pointerEvents: "auto",
+          transformOrigin: "0 0",
+          transform: pulse ? "scale(.9) translateY(4px)" : "none",
+          transition: "transform .2s cubic-bezier(.3,1.6,.5,1)",
+        }}
+      >
+        <rect x="-26" y="-6" width="52" height="70" fill="#000" opacity={0} />
+        {/* socket */}
+        <rect x="-8" y="-4" width="16" height="10" rx="1.5" fill="#5a5651" stroke="#0b0b0a" strokeWidth=".8" />
+        <rect x="-7" y="1" width="14" height="1.5" fill="#0b0b0a" opacity=".6" />
+        {/* glass */}
+        <path
+          d="M-7 5C-7 12 -17 17 -17 30a17 17 0 0 0 34 0C17 17 7 12 7 5z"
+          fill={lit ? "#fff1c7" : "rgba(150,135,105,.2)"}
+          stroke={lit ? "#ffe3a1" : "var(--ink)"}
+          strokeOpacity={lit ? 1 : 0.28}
+          strokeWidth="1.2"
+          style={{
+            transition: "fill .45s, stroke .45s",
+            filter: lit ? "drop-shadow(0 0 10px #ffd98a)" : "none",
+          }}
+        />
+        {/* filament */}
+        <path
+          d="M-3 6V22l3 -4 3 4V6"
+          fill="none"
+          stroke={lit ? "#ff9a2e" : "var(--ink)"}
+          strokeOpacity={lit ? 1 : 0.4}
+          strokeWidth="1.2"
+          strokeLinejoin="round"
+          style={{ transition: "stroke .45s" }}
+        />
+        <ellipse cx="-6" cy="26" rx="2.5" ry="6" fill="#fff" opacity={lit ? 0.7 : 0.6} />
+      </g>
+    </g>
+  );
+}
+
+const Lamps = memo(function Lamps({ dark, onToggle }) {
+  const [kick, setKick] = useState(0);
+  const [pull, setPull] = useState(false);
+  const click = () => {
+    setPull(true);
+    setKick((k) => k + 1);
+    setTimeout(() => setPull(false), 220);
+    onToggle();
+  };
+  const keyDown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      click();
+    }
+  };
+  return (
+    <div className="lamps-wrapper" aria-label="Room lighting controls">
+      <svg
+        viewBox="0 0 380 580"
+        className="lamps-svg"
+        style={{ transformOrigin: "50% 0" }}
+      >
+        <defs>
+          <linearGradient id="shade" x1="0" x2="1">
+            <stop offset="0" stopColor="#3a3835" />
+            <stop offset=".45" stopColor="#1a1918" />
+            <stop offset="1" stopColor="#0b0b0a" />
+          </linearGradient>
+          <linearGradient id="cone" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stopColor="#ffd98a" stopOpacity=".75" />
+            <stop offset=".5" stopColor="#ffd98a" stopOpacity=".2" />
+            <stop offset="1" stopColor="#ffd98a" stopOpacity="0" />
+          </linearGradient>
+          <radialGradient id="halo">
+            <stop offset="0" stopColor="#ffd98a" stopOpacity=".9" />
+            <stop offset="1" stopColor="#ffd98a" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        {/* lamp B (shorter, behind) */}
+        <g
+          key={`b${kick}`}
+          className="lamp-swing"
+          style={{
+            transformOrigin: "236px 0",
+            animationDelay: ".12s",
+            "--amp": "5deg",
+          }}
+        >
+          <line x1="236" y1="0" x2="236" y2="214" stroke="#2a2927" strokeWidth="2" />
+          <g
+            className={dark ? "lamp-on" : ""}
+            style={{ opacity: dark ? 1 : 0, transition: "opacity .5s" }}
+          >
+            <polygon points="206,294 266,294 366,560 106,560" fill="url(#cone)" />
+            <ellipse cx="236" cy="292" rx="46" ry="26" fill="url(#halo)" />
+          </g>
+          <Shade lit={dark} x={236} y={214} scale={0.72} />
+          <Bulb
+            lit={dark}
+            x={236}
+            y={291}
+            scale={0.9}
+            pulse={pull}
+            onClick={click}
+            onKeyDown={keyDown}
+            label={dark ? "Turn the lights on" : "Turn the lights off"}
+          />
+        </g>
+
+        {/* lamp A (tall, with pull chain) */}
+        <g
+          key={`a${kick}`}
+          className="lamp-swing"
+          style={{
+            transformOrigin: "110px 0",
+            "--amp": "7deg",
+          }}
+        >
+          <line x1="110" y1="0" x2="110" y2="120" stroke="#2a2927" strokeWidth="2" />
+          <g
+            className={dark ? "lamp-on" : ""}
+            style={{ opacity: dark ? 1 : 0, transition: "opacity .5s" }}
+          >
+            <polygon points="68,232 152,232 290,560 -70,560" fill="url(#cone)" />
+            <ellipse cx="110" cy="250" rx="64" ry="38" fill="url(#halo)" />
+          </g>
+          <Shade lit={dark} x={110} y={120} scale={1} />
+          <Bulb
+            lit={dark}
+            x={110}
+            y={228}
+            scale={1.25}
+            pulse={pull}
+            onClick={click}
+            onKeyDown={keyDown}
+            label={dark ? "Turn the lights on" : "Turn the lights off"}
+          />
+        </g>
+      </svg>
+    </div>
+  );
+});
+
 export default function App() {
+  const [theme, setTheme] = useState(() => {
+    if (typeof document !== "undefined" && document.documentElement.dataset.theme) {
+      return document.documentElement.dataset.theme;
+    }
+    try {
+      const saved = localStorage.getItem("portfolio-theme") || localStorage.getItem("theme");
+      if (saved === "dark" || saved === "light") return saved;
+    } catch {
+      /* ignore */
+    }
+    return "light";
+  });
+
+  const toggleTheme = useCallback(() => {
+    const root = document.documentElement;
+    root.classList.add("theming");
+    setTheme((current) => (current === "light" ? "dark" : "light"));
+    setTimeout(() => root.classList.remove("theming"), 900);
+  }, []);
+
+  useEffect(() => {
+    const isDark = theme === "dark";
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.classList.toggle("dark", isDark);
+    try {
+      localStorage.setItem("portfolio-theme", theme);
+      localStorage.setItem("theme", theme);
+    } catch {
+      /* Theme still works without storage. */
+    }
+  }, [theme]);
   useEffect(() => {
     const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
     const animations = new Set();
@@ -119,12 +334,14 @@ export default function App() {
     <Header />
     <main className="page-frame" id="main">
       <section className="hero" id="about">
+        <div
+          className="hero-ambient-glow"
+          style={{ opacity: theme === "dark" ? 1 : 0 }}
+          aria-hidden="true"
+        />
+        <Lamps dark={theme === "dark"} onToggle={toggleTheme} />
         <div className="hero-intro">
           <div className="profile-intro"><img className="profile-image" src={profilePhoto} alt="Pyae Sone Thant Kyaw" fetchpriority="high" width="224" height="280" /><p>Computer Science master's student building full-stack web and native Android apps, from intuitive UI and robust REST APIs to automated CI/CD deployment.</p></div>
-          <a href="#contact" className="availability" aria-label="Available for freelance work. Get in touch."><svg className="availability-ring" viewBox="0 0 100 100" aria-hidden="true">
-            <defs><path id="availability-circle" d="M50,50 m-40,0 a40,40 0 1,1 80,0 a40,40 0 1,1 -80,0" /></defs>
-            <text><textPath href="#availability-circle">AVAILABLE FOR FREELANCE · AVAILABLE FOR FREELANCE ·</textPath></text>
-          </svg><span className="availability-arrow" aria-hidden="true">↘</span></a>
         </div>
         <h1>Pyae Sone<br /><em>Thant</em> Kyaw</h1>
         <div className="hero-meta">
@@ -151,7 +368,7 @@ export default function App() {
 
       <section className="section" id="github">
         <SectionHeading number="03" label="GitHub">Code, in the <em>open.</em></SectionHeading>
-        <div className="github-panel"><div className="calendar-scroll"><GitHubCalendar username="pyaestk" colorScheme="light" blockSize={11} blockMargin={4} blockRadius={2} fontSize={11} style={{ fontFamily: "var(--mono)", margin: "0 auto" }} theme={{ light: ["#e0dfd6", "#c7e0ce", "#8dc9a2", "#3ddc84", "#168348"] }} errorMessage="GitHub activity is unavailable right now. Visit my profile to see recent work." /></div><a className="text-link" href="https://github.com/pyaestk" target="_blank" rel="noreferrer">View profile <ArrowUpRight size={16} /></a></div>
+        <div className="github-panel"><div className="calendar-scroll"><GitHubCalendar username="pyaestk" colorScheme={theme} blockSize={11} blockMargin={4} blockRadius={2} fontSize={11} style={{ fontFamily: "var(--mono)", margin: "0 auto" }} theme={{ light: ["#e0dfd6", "#c7e0ce", "#8dc9a2", "#3ddc84", "#168348"], dark: ["#252d28", "#254b34", "#317b4d", "#37b96b", "#3ddc84"] }} errorMessage="GitHub activity is unavailable right now. Visit my profile to see recent work." /></div><a className="text-link" href="https://github.com/pyaestk" target="_blank" rel="noreferrer">View profile <ArrowUpRight size={16} /></a></div>
       </section>
 
       <section className="section" id="skills">
