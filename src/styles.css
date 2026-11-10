@@ -184,7 +184,7 @@ h1 em { color: var(--display-hot); }
   .hero-intro { margin-bottom: 36px; }
   .profile-intro { gap: 24px; }
   .profile-image { width: clamp(110px, 27vw, 180px); }
-  .profile-intro p { font-size: 17px; line-height: 1.35; }
+  .profile-intro p { font-size: 13px; line-height: 1.35; }
   h1 { font-size: 17vw; }
   .hero-meta { grid-template-columns: 1fr 1fr; margin-top: 30px; row-gap: 24px; font-size: 11px; }
   .hero-actions { grid-column: auto; flex-wrap: wrap; }
